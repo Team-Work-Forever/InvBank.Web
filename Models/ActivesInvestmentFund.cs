@@ -21,7 +21,7 @@ public class ActivesInvestmentFund
     [Required(ErrorMessage = "A percentagem de imposto é obrigatória."), Range(0, 300, ErrorMessage = "A percentagem de imposto deve estar entre 0 e 300.")]
     public decimal TaxPercent { get; set; } = 0;
 
-    [Required(ErrorMessage = "A conta é obrigatória."), StringLength(9, MinimumLength = 9, ErrorMessage = "A conta deve ter exatamente 9 dígitos.")]
+    [Required(ErrorMessage = "A conta é obrigatória."), StringLength(30, MinimumLength = 30, ErrorMessage = "A conta deve ter exatamente 28 dígitos.")]
     public string Account { get; set; } = string.Empty;
 
     public IEnumerable<ValidationResult> Validate()

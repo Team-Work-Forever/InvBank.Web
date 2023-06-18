@@ -47,18 +47,17 @@
     {
         validationErrors.Clear();
 
-        var result = await authenticationService.Login(LoginModel.Email, LoginModel.Password);
-
         var validationResults = LoginModel.Validate();
+        
         if (validationResults.Any())
         {
-            // validationErrors.AddRange(validationResults.Select(result => result.ErrorMessage));
+            validationErrors.AddRange(validationResults.Select(result => result.ErrorMessage));
         }
-        else
-        {
-            if (!result.IsError)
-                navigationManager.NavigateTo("/");
-        }
+
+        var result = await authenticationService.Login(LoginModel.Email, LoginModel.Password);
+
+        if (!result.IsError)
+            navigationManager.NavigateTo("/");
     }
 
 }

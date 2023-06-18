@@ -65,13 +65,13 @@
     {
         validationErrors.Clear();
 
-        var result = await authenticationService.RegisterCompany(RegisterCompanyModel);
-
         var validationResults = RegisterCompanyModel.Validate();
         if (validationResults.Any())
         {
             validationErrors.AddRange(validationResults.Select(result => result.ErrorMessage));
         }
+
+        var result = await authenticationService.RegisterCompany(RegisterCompanyModel);
 
         if (!result.IsError)
         {

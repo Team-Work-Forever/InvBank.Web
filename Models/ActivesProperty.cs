@@ -37,7 +37,7 @@ public class ActivesProperty
     [Required(ErrorMessage = "O valor anual estimado de outras despesas com o imóvel é obrigatório."), Range(0, 10000000000, ErrorMessage = "O valor anual estimado de outras despesas com o imóvel deve estar entre 0 e 10000000000.")]
     public decimal YearlyValue { get; set; } = 0;
 
-    [Required(ErrorMessage = "A conta é obrigatória."), StringLength(9, MinimumLength = 9, ErrorMessage = "A conta deve ter exatamente 9 dígitos.")]
+    [Required(ErrorMessage = "A conta é obrigatória."), StringLength(28, MinimumLength = 28, ErrorMessage = "A conta deve ter exatamente 28 dígitos.")]
     public string Account { get; set; } = string.Empty;
 
     public IEnumerable<ValidationResult> Validate()

@@ -1,5 +1,8 @@
-@page "/createdeposit"
+@page "/createdeposit/{AccountIban}"
+@using InvBank.Web.Contracts.Account
 @using InvBank.Models
+@inject AccountEndPoint accountEndPoint
+@inject DepositEndPoint depositEndPoint
 @inject NavigationManager navigationManager
 
 <PageTitle>Registar Depósito a Prazo</PageTitle>
@@ -55,7 +58,7 @@
                     <option value="">Selecionar Conta</option>
                     @foreach (var account in Accounts)
                     {
-                        <option>@account.Iban</option>
+                        <option>@account.iban</option>
                     }
                 } else {
                     <option value="">Selecionar Conta</option>
@@ -63,7 +66,7 @@
             </InputSelect>
         </div> 
         <button href="/actives" type="submit" class="btn btn-primary">Registar</button>    
-        <a href="/actives" class="btn btn-secondary">Cancelar</a>
+        <a href="@($"account/{AccountIban}")" class="btn btn-secondary">Cancelar</a>
     </EditForm>
   </div>
 </div>
@@ -71,33 +74,28 @@
 @code {
 
     [Parameter]
-    public int Id { get; set; }
+    public string AccountIban { get; set; } = null!;
 
     public ActivesDepositAccount DepositActive { get; set; } = new ActivesDepositAccount();
 
     private List<string> validationErrors = new List<string>();
 
-    public IEnumerable<Account> Accounts { get; set; }
+    public List<AccountResponse> Accounts { get; set; } = new();
 
-    public void InitializeAccounts()
+    protected override async Task OnInitializedAsync()
     {
-        var A1 = new Account
+        var result = await accountEndPoint.GetAllAccount();
+
+        if (result.IsError)
         {
-            Iban = "637494294",
-            BankName = "Inv",
-            AccountBank = "875753944"
-        };
+            return;
+        }
 
-        Accounts = new List<Account> { A1 };
+        Accounts = result.Value.ToList();
+
     }
 
-    protected async override void OnInitialized()
-    {
-        InitializeAccounts();
-        // DepositActive = await ActivesService.GetDepositActive(Id);
-    }
-
-    private void Register()
+    private async void Register()
     {
         validationErrors.Clear();
 
@@ -105,12 +103,27 @@
         if (validationResults.Any())
         {
             validationErrors.AddRange(validationResults.Select(result => result.ErrorMessage));
+            return;
         }
-        else
+
+        var result = await depositEndPoint.CreateDeposit(new CreateDepositRequest {
+            Duration = DepositActive.Duration,
+            IBAN = DepositActive.Account,
+            InitialDate = DateOnly.FromDateTime(DepositActive.InitialDate).ToString("dd/MM/yyyy"),
+            Name = DepositActive.Name,
+            TaxPercent = DepositActive.TaxPercent,
+            Value = DepositActive.Value,
+            YearlyTax = DepositActive.YearlyTax
+        });
+
+        if (result.IsError)
         {
-            // ActivesService.AddDepositActive(DepositActive);
-            navigationManager.NavigateTo("/actives");
+            return;
         }
+
+        navigationManager.NavigateTo($"/account/{AccountIban}");
+
     }
 
 }
+

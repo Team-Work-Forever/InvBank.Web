@@ -1,5 +1,9 @@
-@page "/createproperty"
+@page "/createproperty/{AccountIban}"
+@using InvBank.Web.Contracts.PropertyAccount
+@using InvBank.Web.Contracts.Account
 @using InvBank.Models
+@inject AccountEndPoint accountEndPoint
+@inject PropertyAccountEndPoint propertyAccountEndPoint
 @inject NavigationManager navigationManager
 
 <PageTitle>Registar Fundo de Investimento</PageTitle>
@@ -73,7 +77,7 @@
                     <option value="">Selecionar Conta</option>
                     @foreach (var account in Accounts)
                     {
-                        <option>@account.Iban</option>
+                        <option>@account.iban</option>
                     }
                 } else {
                     <option value="">Selecionar Conta</option>
@@ -81,7 +85,7 @@
             </InputSelect>
         </div> 
         <button href="/actives" type="submit" class="btn btn-primary">Registar</button>    
-        <a href="/actives" class="btn btn-secondary">Cancelar</a>
+        <a href="@($"account/{AccountIban}")" class="btn btn-secondary">Cancelar</a>
     </EditForm>
   </div>
 </div>
@@ -89,32 +93,28 @@
 @code {
 
     [Parameter]
-    public int Id { get; set; }
+    public string AccountIban { get; set; } = null!;
 
     public ActivesProperty PropertyActive { get; set; } = new ActivesProperty();
 
     private List<string> validationErrors = new List<string>();
 
-    public IEnumerable<Account> Accounts { get; set; }
+    public List<AccountResponse> Accounts { get; set; } = new();
 
-    public void InitializeAccounts()
+    protected override async Task OnInitializedAsync()
     {
-        var A1 = new Account
+        var result = await accountEndPoint.GetAllAccount();
+
+        if (result.IsError)
         {
-            Iban = "637494294",
-            BankName = "Inv",
-            AccountBank = "875753943"
-        };
+            return;
+        }
 
-        Accounts = new List<Account> { A1 };
+        Accounts = result.Value.ToList();
+
     }
 
-    protected async override void OnInitialized()
-    {
-        InitializeAccounts();
-    }
-
-    private void Register()
+    private async void Register()
     {
         validationErrors.Clear();
 
@@ -122,12 +122,30 @@
         if (validationResults.Any())
         {
             validationErrors.AddRange(validationResults.Select(result => result.ErrorMessage));
+            return;
         }
-        else
+
+        var result = await propertyAccountEndPoint.CreatePropertyAccount(new CreatePropertyAccountRequest {
+            Duration = PropertyActive.Duration,
+            InitialDate = DateOnly.FromDateTime(PropertyActive.InitialDate).ToString("dd/MM/yyyy"),
+            Name = PropertyActive.Name,
+            AccountIBAN = PropertyActive.Account,
+            Designation = PropertyActive.Designation,
+            MonthValue = PropertyActive.MonthValue,
+            PostalCode = PropertyActive.PostalCode,
+            PropertyValue = PropertyActive.PropertyValue,
+            RentValue = PropertyActive.RentValue,
+            TaxPercent = PropertyActive.TaxPercent,
+            YearlyValue = PropertyActive.YearlyValue
+        });
+
+        if (result.IsError)
         {
-            // ActivesService.AddPropertyActive(PropertyActive);
-            navigationManager.NavigateTo("/actives");
+            return;
         }
+
+        navigationManager.NavigateTo($"/account/{AccountIban}");
+
     }
 
 }

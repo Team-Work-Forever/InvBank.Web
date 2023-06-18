@@ -77,14 +77,15 @@
     {
         validationErrors.Clear();
 
-        var result = await authenticationService.RegisterClient(RegisterModel);
-
+        
         var validationResults = RegisterModel.Validate();
         if (validationResults.Any())
         {
             validationErrors.AddRange(validationResults.Select(result => result.ErrorMessage));
         }
        
+        var result = await authenticationService.RegisterClient(RegisterModel);
+
         if (!result.IsError)
         {
             navigationManager.NavigateTo("/login");

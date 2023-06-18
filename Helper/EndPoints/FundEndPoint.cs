@@ -11,7 +11,7 @@ public class FundEndPoint : BaseEndPoint
     {
     }
 
-    public async Task<ErrorOr<SimpleResponse>> CreateFund(CreateDepositRequest request)
+    public async Task<ErrorOr<SimpleResponse>> CreateFund(CreateFundRequest request)
     {
         return await MakeRequest<SimpleResponse>(
             () => _apiHelper.DoPost($"/funds/create", JsonSerializer.Serialize(request), "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI")

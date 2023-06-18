@@ -1,5 +1,9 @@
-@page "/createinvfund"
+@page "/createinvfund/{AccountIban}"
 @using InvBank.Models
+@inject FundEndPoint fundEndPoint
+@inject AccountEndPoint accountEndPoint
+@using InvBank.Web.Contracts.Fund
+@using InvBank.Web.Contracts.Account
 @inject NavigationManager navigationManager
 
 <PageTitle>Registar Fundo de Investimento</PageTitle>
@@ -52,7 +56,7 @@
                         <option value="">Selecionar Conta</option>
                         @foreach (var account in Accounts)
                         {
-                                <option>@account.Iban</option>
+                                <option>@account.iban</option>
                         }
                     }
                     else
@@ -62,7 +66,7 @@
             </InputSelect>
         </div> 
         <button href="/actives" type="submit" class="btn btn-primary">Registar</button>    
-        <a href="/actives" class="btn btn-secondary">Cancelar</a>
+        <a href="@($"account/{AccountIban}")" class="btn btn-secondary">Cancelar</a>
     </EditForm>
   </div>
 </div>
@@ -70,32 +74,28 @@
 @code {
 
     [Parameter]
-    public int Id { get; set; }
+    public string AccountIban { get; set; } = null!;
 
     public ActivesInvestmentFund InvFundActive { get; set; } = new ActivesInvestmentFund();
 
     private List<string> validationErrors = new List<string>();
 
-    public IEnumerable<Account> Accounts { get; set; }
+    public List<AccountResponse> Accounts { get; set; } = new();
 
-    public void InitializeAccounts()
+    protected override async Task OnInitializedAsync()
     {
-        var A1 = new Account
+        var result = await accountEndPoint.GetAllAccount();
+
+        if (result.IsError)
         {
-            Iban = "637494294",
-            BankName = "Inv",
-            AccountBank = "875753943"
-        };
+            return;
+        }
 
-        Accounts = new List<Account> { A1 };
+        Accounts = result.Value.ToList();
+
     }
 
-    protected async override void OnInitialized()
-    {
-        InitializeAccounts();
-    }
-
-    private void Register()
+    private async void Register()
     {
         validationErrors.Clear();
 
@@ -103,12 +103,25 @@
         if (validationResults.Any())
         {
             validationErrors.AddRange(validationResults.Select(result => result.ErrorMessage));
+            return;
         }
-        else
+
+        var result = await fundEndPoint.CreateFund(new CreateFundRequest {
+            Account = AccountIban,
+            Duration = InvFundActive.Duration,
+            InitialDate = DateOnly.FromDateTime(InvFundActive.InitialDate).ToString("dd/MM/yyyy"),
+            Name = InvFundActive.Name,
+            TaxPercent = InvFundActive.TaxPercent,
+            Value = InvFundActive.Value
+        });
+
+        if (result.IsError)
         {
-            // ActivesService.AddDepositActive(InvFundActive);
-            navigationManager.NavigateTo("/actives");
+            return;
         }
+
+        navigationManager.NavigateTo($"/account/{AccountIban}");
+
     }
 
 }
