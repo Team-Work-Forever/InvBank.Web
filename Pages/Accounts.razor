@@ -1,0 +1,66 @@
+@page "/accounts"
+@using InvBank.Models;
+@inject NavigationManager navigationManager
+
+<PageTitle>Contas</PageTitle>
+
+<h1>Gerir Contas</h1>
+
+<table class="table table.sprited table-bordered table-hover">
+  <thead>
+	<th>Iban</th>
+	<th>Nome do Banco</th>
+	<th></th>
+  </thead>
+  <tbody>
+		@if (userAccounts.Count() > 0)
+		{ @foreach (var user in userAccounts)
+			{
+			<tr>
+			  <td>@user.Iban</td>
+			  <td>@user.BankName</td>
+			  <td>
+				<button class="btn btn-primary" @onclick="UpdateAccount">
+				  <i class="bi bi-pencil"></i>
+				</button>
+				<button class="btn btn-danger" @onclick="DeleteAccount">
+				  <i class="bi bi-trash3-fill"></i>
+				</button>
+			  </td>
+			</tr>
+			} }
+		else
+		{
+		<tr>
+		  <td colspan="3" align="center">Nenhuma conta registada!</td>
+		</tr>
+		}
+  </tbody>
+</table>
+
+@code {
+
+	protected IEnumerable<Account> userAccounts = null!;
+		
+	public void InitializeAccounts()
+	{
+		var A1 = new Account
+			{
+				Iban = "238445245",
+				AccountBank = "637485959",
+				BankName = "Inv"
+			}; 
+			
+		userAccounts = new List<Account> { A1 };
+	}
+
+	protected override Task OnInitializedAsync()
+	{
+		InitializeAccounts();
+		return base.OnInitializedAsync();
+	}
+
+	protected void UpdateAccount() { navigationManager.NavigateTo("/accounts"); }
+	protected void DeleteAccount() { navigationManager.NavigateTo("/accounts"); }
+
+} 
