@@ -1,11 +1,10 @@
-﻿@page "/"
+﻿@page "/account/{iban}"
 @inject AccountEndPoint AccountEndPoint;
 @attribute [Authorize()]
 
-
 <PageTitle>Menu Inicial</PageTitle>
 
-<h1>Bem-vindo à sua conta!</h1>
+<h1>Bem-vindo à sua conta! @iban</h1>
 
 <div class="row row-cols-1 row-cols-md-3 g-3">
   <div class="col-sm-6 mb-3 mb-sm-0">
@@ -37,4 +36,9 @@
   </div>
 </div>
 
+@code {
 
+  [Parameter]
+  public string iban { get; set; } = null!;
+
+}

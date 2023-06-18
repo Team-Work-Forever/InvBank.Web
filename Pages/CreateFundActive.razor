@@ -69,6 +69,9 @@
 
 @code {
 
+    [Parameter]
+    public int Id { get; set; }
+
     public ActivesInvestmentFund InvFundActive { get; set; } = new ActivesInvestmentFund();
 
     private List<string> validationErrors = new List<string>();

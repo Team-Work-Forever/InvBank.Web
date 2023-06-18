@@ -88,6 +88,9 @@
 
 @code {
 
+    [Parameter]
+    public int Id { get; set; }
+
     public ActivesProperty PropertyActive { get; set; } = new ActivesProperty();
 
     private List<string> validationErrors = new List<string>();

@@ -1,6 +1,8 @@
-@page "/accounts"
-@using InvBank.Models;
+@page "/"
+@using InvBank.Web.Contracts.Account
+@inject AccountEndPoint accountEndPoint
 @inject NavigationManager navigationManager
+@attribute [Authorize()]
 
 <PageTitle>Contas</PageTitle>
 
@@ -16,9 +18,9 @@
 		@if (userAccounts.Count() > 0)
 		{ @foreach (var user in userAccounts)
 			{
-			<tr>
-			  <td>@user.Iban</td>
-			  <td>@user.BankName</td>
+			<tr @onclick="() => GoToAccount(user.iban)">
+			  <td>@user.iban</td>
+			  <td>@user.Bank</td>
 			  <td>
 				<button class="btn btn-primary" @onclick="UpdateAccount">
 				  <i class="bi bi-pencil"></i>
@@ -40,26 +42,22 @@
 
 @code {
 
-	protected IEnumerable<Account> userAccounts = null!;
+	protected List<AccountResponse> userAccounts = new();
 		
-	public void InitializeAccounts()
+	protected override async Task OnInitializedAsync()
 	{
-		var A1 = new Account
-			{
-				Iban = "238445245",
-				AccountBank = "637485959",
-				BankName = "Inv"
-			}; 
-			
-		userAccounts = new List<Account> { A1 };
+		var result = await accountEndPoint.GetAllAccount();
+
+		if (result.IsError)
+		{
+			return;
+		}
+
+		userAccounts = result.Value.ToList();
+
 	}
 
-	protected override Task OnInitializedAsync()
-	{
-		InitializeAccounts();
-		return base.OnInitializedAsync();
-	}
-
+	protected void GoToAccount(string iban) { navigationManager.NavigateTo($"/account/{iban}"); }
 	protected void UpdateAccount() { navigationManager.NavigateTo("/accounts"); }
 	protected void DeleteAccount() { navigationManager.NavigateTo("/accounts"); }
 
