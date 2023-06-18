@@ -29,13 +29,24 @@ public class AuthenticationProvider : AuthenticationStateProvider
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer ", accessToken);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
         Dictionary<string, string> dictionary = _jwtModifier.GetClaims(accessToken);
         IEnumerable<Claim> claims = dictionary.Select(value => new Claim(value.Key, value.Value));
 
         return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt")));
 
+    }
+
+    public async Task AuthenticateUser(string accessToken, string refreshToken)
+    {
+        await _localStorage.SetItemAsStringAsync(CookieValue.AccessToken, accessToken);
+        await _localStorage.SetItemAsStringAsync(CookieValue.RefreshToken, refreshToken);
+
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        NotifyAuthenticationStateChanged(
+            Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("email", "email") }, "jwt")))));
     }
 
 }

@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using InvBank.Web.Helper.Authentication;
 using InvBank.Web.Helper.EndPoints;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -11,6 +12,7 @@ public static class DependencyInjection
     {
 
         services.AddAuthorizationCore();
+        services.AddBlazoredLocalStorage();
         services.AddScoped<AuthenticationStateProvider, AuthenticationProvider>();
 
         return services;

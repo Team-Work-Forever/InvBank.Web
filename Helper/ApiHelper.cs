@@ -44,7 +44,7 @@ public class ApiHelper
     public async Task<HttpResponseMessage> DoPost(string endpoint, string payload)
     {
         var url = apiUrl + endpoint;
-        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        var request = new HttpRequestMessage(HttpMethod.Post, url);
 
         request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
 
@@ -54,7 +54,7 @@ public class ApiHelper
     public async Task<HttpResponseMessage> DoPost(string endpoint, string payload, string token)
     {
         var url = apiUrl + endpoint;
-        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        var request = new HttpRequestMessage(HttpMethod.Post, url);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
