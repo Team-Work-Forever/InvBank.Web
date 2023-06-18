@@ -9,7 +9,15 @@ public static class DependencyInjection
     {
 
         services.AddScoped<ApiHelper>();
+
+        // Endpoints
         services.AddScoped<AccountEndPoint>();
+        services.AddScoped<AuthenticationEndPoint>();
+        services.AddScoped<BankEndPoint>();
+        services.AddScoped<DepositEndPoint>();
+        services.AddScoped<FundEndPoint>();
+        services.AddScoped<PropertyAccountEndPoint>();
+        services.AddScoped<ReportEndPoint>();
 
         return services;
     }
