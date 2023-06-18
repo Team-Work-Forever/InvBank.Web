@@ -229,9 +229,9 @@
 
 @code {
 
-    public IEnumerable<ActivesDepositAccount> DepositAccounts { get; set; }
-    public IEnumerable<ActivesInvestmentFund> InvFundAccounts { get; set; }
-    public IEnumerable<ActivesProperty> PropertyAccounts { get; set; }
+    public IEnumerable<ActivesDepositAccount> DepositAccounts { get; set; } = null!;
+    public IEnumerable<ActivesInvestmentFund> InvFundAccounts { get; set; } = null!;
+    public IEnumerable<ActivesProperty> PropertyAccounts { get; set; } = null!;
 
     // [Inject]
     // public IActivesService ActivesService { get; set; }
