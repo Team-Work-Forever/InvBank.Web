@@ -283,7 +283,19 @@
     protected async void  DeleteDepositActive(Guid id)
     {
         
-        await depositEndPoint.DeleteDeposit(id);
+        var result = await depositEndPoint.DeleteDeposit(id);
+
+		if (result.IsError)
+		{
+			return;
+		}
+
+		var depositId = DepositAccounts.FirstOrDefault(da => da.Id == id);
+
+		if (depositId is not null)
+		{
+			DepositAccounts.Remove(depositId);
+		}
         
     }
 
@@ -303,7 +315,20 @@
 
     protected async void DeletePropertyActive(Guid id)
     {
-        await propertyAccountEndPoint.DeletePropertyAccount(id);
+        var result = await propertyAccountEndPoint.DeletePropertyAccount(id);
+    
+        if (result.IsError)
+		{
+			return;
+		}
+
+		var propertyId = PropertyAccounts.FirstOrDefault(da => da.Id == id);
+
+		if (propertyId is not null)
+		{
+			PropertyAccounts.Remove(propertyId);
+		}
+    
     }
 
 }
