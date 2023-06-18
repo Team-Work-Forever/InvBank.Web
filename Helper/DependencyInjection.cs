@@ -1,9 +1,20 @@
+using InvBank.Web.Helper.Authentication;
 using InvBank.Web.Helper.EndPoints;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace InvBank.Web.Helper;
 
 public static class DependencyInjection
 {
+
+    public static IServiceCollection AddAuthorization(this IServiceCollection services)
+    {
+
+        services.AddAuthorizationCore();
+        services.AddScoped<AuthenticationStateProvider, AuthenticationProvider>();
+
+        return services;
+    }
 
     public static IServiceCollection AddHelper(this IServiceCollection services)
     {
