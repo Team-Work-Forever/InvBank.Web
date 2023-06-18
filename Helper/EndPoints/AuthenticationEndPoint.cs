@@ -1,5 +1,6 @@
 using System.Text.Json;
 using ErrorOr;
+using InvBank.Web.Contracts;
 using InvBank.Web.Contracts.Authentication;
 
 namespace InvBank.Web.Helper.EndPoints;
@@ -24,9 +25,9 @@ public class AuthenticationEndPoint : BaseEndPoint
         );
     }
 
-    public async Task<ErrorOr<AuthenticationResult>> RegisterCompany(RegisterCompanyRequest request)
+    public async Task<ErrorOr<SimpleResponse>> RegisterCompany(RegisterCompanyRequest request)
     {
-        return await MakeRequest<AuthenticationResult>(
+        return await MakeRequest<SimpleResponse>(
             () => _apiHelper.DoPost("/auth/register/company", JsonSerializer.Serialize(request))
         );
     }

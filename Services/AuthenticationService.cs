@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using ErrorOr;
+using InvBank.Models.auth;
 using InvBank.Web.Contracts.Authentication;
 using InvBank.Web.Helper.Authentication;
 using InvBank.Web.Helper.EndPoints;
@@ -34,6 +35,51 @@ public class AuthenticationService
         await _authenticationProvider.AuthenticateUser(authResult.Value.AccessToken, authResult.Value.RefreshToken);
 
         return true;
+    }
+
+    public async Task<ErrorOr<bool>> RegisterClient(RegisterClientModel model)
+    {
+        var authResult = await _authenticationEndPoint.RegisterClient(new RegisterClientRequest
+        {
+            Email = model.Email,
+            Password = model.Password,
+            BirthDate = DateOnly.FromDateTime(model.BirthDate).ToString("dd/MM/yyyy"),
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Cc = model.Cc,
+            Phone = model.Phone,
+            Nif = model.Nif,
+            PostalCode = model.PostalCode
+        });
+
+        if (authResult.IsError)
+        {
+            return authResult.Errors;
+        }
+
+        return true;
+
+    }
+
+    public async Task<ErrorOr<bool>> RegisterCompany(RegisterCompanyModel model)
+    {
+        var authResult = await _authenticationEndPoint.RegisterCompany(new RegisterCompanyRequest
+        {
+            Email = model.Email,
+            Password = model.Password,
+            Name = model.Name,
+            Phone = model.Phone,
+            Nif = model.Nif,
+            PostalCode = model.PostalCode
+        });
+
+        if (authResult.IsError)
+        {
+            return authResult.Errors;
+        }
+
+        return true;
+
     }
 
 }
