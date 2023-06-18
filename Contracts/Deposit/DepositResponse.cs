@@ -25,6 +25,6 @@ public class DepositResponse
     [JsonPropertyName("yearlyTax")]
     public decimal YearlyTax { get; set; }
 
-    [JsonPropertyName("Account")]
+    [JsonPropertyName("account")]
     public string Account { get; set; } = null!;
 };

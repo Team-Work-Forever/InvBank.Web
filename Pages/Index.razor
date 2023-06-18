@@ -233,7 +233,8 @@
     </div>
   </div>
 </div>
-<button onclick="@GenerateProfitReport" class="btn btn-green">Generate Report Profit</button>
+<button @onclick="@GenerateProfitReport" class="m-8 btn btn-warning">Gerar Relatório de Lucro Mensal</button>
+<button @onclick="@GeneratePayReport" class="m-8 btn btn-warning" >Gerar Relatórios de Pagamentos</button>
 
 @code {
 
@@ -278,7 +279,12 @@
 
     protected void GenerateProfitReport() 
     {
-      navigationManager.NavigateTo($"/report/{AccountIban}");
+      navigationManager.NavigateTo($"/report/profit/{AccountIban}");
+    }
+    
+    protected void GeneratePayReport() 
+    {
+      navigationManager.NavigateTo($"/report/pay/{AccountIban}");
     }
 
     protected void CreateDepositActive()

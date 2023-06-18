@@ -18,11 +18,11 @@ public class ReportEndPoint : BaseEndPoint
         );
     }
 
-    public async Task<ErrorOr<ProfitReportResponse>> GenerateReportPay(string accountIban, GeneratePayReportRequest request)
+    public async Task<ErrorOr<PayReportResponse>> GenerateReportPay(string accountIban, GeneratePayReportRequest request)
     {
-        return await MakeRequest<ProfitReportResponse>
+        return await MakeRequest<PayReportResponse>
         (
-            () => _apiHelper.DoPost("/report/pay", JsonSerializer.Serialize(request), "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI")
+            () => _apiHelper.DoPost($"/report/pay?iban={accountIban}", JsonSerializer.Serialize(request), "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI")
         );
     }
 
