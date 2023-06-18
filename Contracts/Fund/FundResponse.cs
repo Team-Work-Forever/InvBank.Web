@@ -5,7 +5,7 @@ namespace InvBank.Web.Contracts.Fund;
 public class FundResponse
 {
     [JsonPropertyName("id")]
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 
     [JsonPropertyName("name")]
     public string Name { get; set; } = null!;

@@ -43,9 +43,9 @@ public class PropertyAccountEndPoint : BaseEndPoint
         );
     }
 
-    public async Task<ErrorOr<IEnumerable<PropertyAccountResponse>>> DeletePropertyAccount(Guid id)
+    public async Task<ErrorOr<SimpleResponse>> DeletePropertyAccount(Guid id)
     {
-        return await MakeRequest<IEnumerable<PropertyAccountResponse>>
+        return await MakeRequest<SimpleResponse>
         (
             () => _apiHelper.DoDelete($"/properties/delete?id={id}", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI")
         );
