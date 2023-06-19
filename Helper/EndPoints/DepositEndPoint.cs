@@ -11,11 +11,19 @@ public class DepositEndPoint : BaseEndPoint
     {
     }
 
+    public async Task<ErrorOr<SimpleResponse>> PayDeposit(PayDepositRequest request)
+    {
+        return await MakeRequest<SimpleResponse>
+        (
+            () => _apiHelper.DoPostAuth($"/deposits/pay", JsonSerializer.Serialize(request))
+        );
+    }
+
     public async Task<ErrorOr<DepositResponse>> GetDeposit(Guid id)
     {
         return await MakeRequest<DepositResponse>
         (
-            () => _apiHelper.DoGet($"/deposits?id={id}", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI")
+            () => _apiHelper.DoGetAuth($"/deposits?id={id}")
         );
     }
 
@@ -23,7 +31,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<IEnumerable<DepositResponse>>
         (
-            () => _apiHelper.DoGet($"/deposits/all?accountIban={accountIban}", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI")
+            () => _apiHelper.DoGetAuth($"/deposits/all?accountIban={accountIban}")
         );
     }
 
@@ -31,7 +39,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoPost($"/deposits/create", JsonSerializer.Serialize(request), "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI")
+            () => _apiHelper.DoPostAuth($"/deposits/create", JsonSerializer.Serialize(request))
         );
     }
 
@@ -39,7 +47,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<IEnumerable<DepositResponse>>
         (
-            () => _apiHelper.DoUpdate($"/deposits/update?iban={depositId}", JsonSerializer.Serialize(request), "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI")
+            () => _apiHelper.DoUpdateAuth($"/deposits/update?iban={depositId}", JsonSerializer.Serialize(request))
         );
     }
 
@@ -47,7 +55,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoDelete($"/deposits/delete?depositIban={depositId}", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI")
+            () => _apiHelper.DoDeleteAuth($"/deposits/delete?depositIban={depositId}")
         );
     }
 

@@ -27,7 +27,7 @@ public class ApiHelper
         return await _httpClient.SendAsync(request);
     }
 
-    public async Task<HttpResponseMessage> DoGet(string endpoint, string token)
+    public async Task<HttpResponseMessage> DoGetAuth(string endpoint)
     {
         var url = apiUrl + endpoint;
         var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -55,7 +55,7 @@ public class ApiHelper
         return await _httpClient.SendAsync(request);
     }
 
-    public async Task<HttpResponseMessage> DoPost(string endpoint, string payload, string token)
+    public async Task<HttpResponseMessage> DoPostAuth(string endpoint, string payload)
     {
         var url = apiUrl + endpoint;
         var request = new HttpRequestMessage(HttpMethod.Post, url);
@@ -66,7 +66,7 @@ public class ApiHelper
         return await _httpClient.SendAsync(request);
     }
 
-    public async Task<HttpResponseMessage> DoUpdate(string endpoint, string payload, string token)
+    public async Task<HttpResponseMessage> DoUpdateAuth(string endpoint, string payload)
     {
         var url = apiUrl + endpoint;
         var request = new HttpRequestMessage(HttpMethod.Put, url);
@@ -77,7 +77,7 @@ public class ApiHelper
         return await _httpClient.SendAsync(request);
     }
 
-    public async Task<HttpResponseMessage> DoDelete(string endpoint, string token)
+    public async Task<HttpResponseMessage> DoDeleteAuth(string endpoint)
     {
         var url = apiUrl + endpoint;
         var request = new HttpRequestMessage(HttpMethod.Delete, url);
