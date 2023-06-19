@@ -3,7 +3,7 @@
 @inject NavigationManager navigationManager
 @inject InvBank.Service.AuthenticationService authenticationService
 
-<h1>Autentificação</h1>
+<h1>Registo</h1>
 
 <div class="row">
   <div class="col">
@@ -29,11 +29,11 @@
         </div>     
         <div class="mb-3">
             <label for="password" class="form-label">Password:</label>
-            <InputText id=password @bind-Value=RegisterModel.Password class="form-control"></InputText>
+            <InputText type="password" id=password @bind-Value=RegisterModel.Password class="form-control"></InputText>
         </div>     
         <div class="mb-3">
             <label for="confirmpassword" class="form-label">Confirmar Password:</label>
-            <InputText id=confirmpassword @bind-Value=RegisterModel.ConfirmPassword class="form-control"></InputText>
+            <InputText type="password" id=confirmpassword @bind-Value=RegisterModel.ConfirmPassword class="form-control"></InputText>
         </div>     
         <div class="mb-3">
             <label for="fistName" class="form-label">Nome:</label>
@@ -82,6 +82,7 @@
         if (validationResults.Any())
         {
             validationErrors.AddRange(validationResults.Select(result => result.ErrorMessage));
+            return;
         }
        
         var result = await authenticationService.RegisterClient(RegisterModel);
