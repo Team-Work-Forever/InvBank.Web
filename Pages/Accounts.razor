@@ -20,14 +20,14 @@
 		@if (UserAccounts.Count() > 0)
 		{ @foreach (var user in UserAccounts)
 			{
-			<tr @onclick="() => GoToAccount(user.iban)">
-			  <td>@user.iban</td>
+			<tr>
+			  <td @onclick="() => GoToAccount(user.iban)">@user.iban</td>
 			  <td>@user.Bank</td>
 			  <td>
 				<button class="btn btn-primary" @onclick="UpdateAccount">
 				  <i class="bi bi-pencil"></i>
 				</button>
-				<button class="btn btn-danger" @onclick="DeleteAccount">
+				<button class="btn btn-danger" @onclick="() => DeleteAccount(user.iban)">
 				  <i class="bi bi-trash3-fill"></i>
 				</button>
 			  </td>
@@ -90,13 +90,24 @@
 
 		if (!result.IsError)
 		{
-			UserAccounts.Add(result.Value);
+			navigationManager.NavigateTo("/", true);
 		}
 
 	}
 
 	protected void GoToAccount(string iban) { navigationManager.NavigateTo($"/account/{iban}"); }
 	protected void UpdateAccount() { navigationManager.NavigateTo("/accounts"); }
-	protected void DeleteAccount() { navigationManager.NavigateTo("/accounts"); }
+	protected async void DeleteAccount(string iban) 
+	{ 
+		var result = await accountEndPoint.DeleteAccount(iban);
+
+		if (result.IsError)
+		{
+			return;
+		}
+
+		navigationManager.NavigateTo("/", true);
+
+	}
 
 } 
