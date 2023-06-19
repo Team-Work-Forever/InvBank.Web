@@ -1,5 +1,7 @@
 @page "/"
 @using InvBank.Web.Contracts.Account
+@using InvBank.Web.Contracts.Bank
+@inject BankEndPoint bankEndPoint
 @inject AccountEndPoint accountEndPoint
 @inject NavigationManager navigationManager
 @attribute [Authorize()]
@@ -15,8 +17,8 @@
 	<th></th>
   </thead>
   <tbody>
-		@if (userAccounts.Count() > 0)
-		{ @foreach (var user in userAccounts)
+		@if (UserAccounts.Count() > 0)
+		{ @foreach (var user in UserAccounts)
 			{
 			<tr @onclick="() => GoToAccount(user.iban)">
 			  <td>@user.iban</td>
@@ -39,21 +41,57 @@
 		}
   </tbody>
 </table>
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+   	Criar Conta
+  </button>
+  <ul class="dropdown-menu">
+	@foreach (var bank in Banks)
+	{
+		<li><a @onclick="() => CreateAccount(bank.Iban)" class="dropdown-item" href="#">@bank.Iban</a></li>
+	}
+  </ul>
+</div>
 
 @code {
 
-	protected List<AccountResponse> userAccounts = new();
+	protected List<AccountResponse> UserAccounts = new();
+	protected List<BankResponse> Banks = new();
 		
 	protected override async Task OnInitializedAsync()
 	{
-		var result = await accountEndPoint.GetAllAccount();
+		var resultAccounts = await accountEndPoint.GetAllAccount();
 
-		if (result.IsError)
+		if (resultAccounts.IsError)
 		{
 			return;
 		}
 
-		userAccounts = result.Value.ToList();
+		UserAccounts = resultAccounts.Value.ToList();
+		
+		var resultBanks = await bankEndPoint.GetAllBanks();
+
+		if (resultBanks.IsError)
+		{
+			return;
+		}
+
+		Banks = resultBanks.Value.ToList();
+
+	}
+
+	protected async void CreateAccount(string iban) 
+	{ 
+
+		var result = await accountEndPoint.CreateAccount(new CreateAccountRequest
+		{
+			BankIban = iban
+		});
+
+		if (!result.IsError)
+		{
+			UserAccounts.Add(result.Value);
+		}
 
 	}
 

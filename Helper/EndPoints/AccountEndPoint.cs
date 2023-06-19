@@ -12,6 +12,11 @@ public class AccountEndPoint : BaseEndPoint
     {
     }
 
+    public async Task<ErrorOr<AccountResponse>> CreateAccount(CreateAccountRequest request)
+    {
+        return await MakeRequest<AccountResponse>(() => _apiHelper.DoPost($"/accounts/create", JsonSerializer.Serialize(request),"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI"));
+    }
+
     public async Task<ErrorOr<AccountResponse>> GetAccount(string iban)
     {
         return await MakeRequest<AccountResponse>(() => _apiHelper.DoGet($"/accounts?iban={iban}", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InplQGdtYWlsLmNvbSIsInJvbGUiOiIwIiwidXNlcklkIjoiODAwNWU1MGQtNDE2OS00ZjQwLTlmYzMtZjk2YTY5YjgwNmI5IiwiZXhwIjoxNjg3MDkwMTM4LCJpc3MiOiJJbnZlc3RtZW50QmFuayIsImF1ZCI6IkludmVzdG1lbnRCYW5rIn0.4aHK7sC1RjGfeXWUmLOy1Bi22GXJqDqZ30nJD6uGcgI"));
