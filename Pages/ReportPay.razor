@@ -4,6 +4,10 @@
 
  <h1>Generation Report</h1>
 
+<InputDate id=initialDate @bind-Value=InitialDate ></InputDate>
+<InputDate id=endDate @bind-Value=EndDate></InputDate>
+<button @onclick="GetData" class="btn btn-primary">Confirmar</button>    
+
 @if (PayReport is not null)
 {
 
@@ -77,14 +81,22 @@
     [Parameter]
     public string AccountIban { get; set; } = null!;
 
+    public DateTime InitialDate { get; set; } = DateTime.Now; 
+    public DateTime EndDate { get; set; } = DateTime.Now.AddDays(30); 
+
     public PayReportResponse PayReport { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await reportEndPoint.GenerateReportPay(AccountIban, new GeneratePayReportRequest 
+        await GetData();
+    }
+
+    protected async Task GetData() 
+    {
+      var result = await reportEndPoint.GenerateReportPay(AccountIban, new GeneratePayReportRequest 
         {
-            InitialDate = "18/06/2023",
-            EndDate = "23/07/2023"
+            InitialDate = DateOnly.FromDateTime(InitialDate).ToString("dd/MM/yyyy"),
+            EndDate = DateOnly.FromDateTime(EndDate).ToString("dd/MM/yyyy")
         });
 
         if (result.IsError)
@@ -93,7 +105,6 @@
         }
 
         PayReport = result.Value;
-
     }
 
 }

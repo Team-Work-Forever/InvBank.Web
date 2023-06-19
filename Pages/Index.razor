@@ -7,6 +7,7 @@
 @inject DepositEndPoint depositEndPoint
 @inject PropertyAccountEndPoint propertyAccountEndPoint
 @inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
 @attribute [Authorize()]
 
 <PageTitle>Menu Inicial</PageTitle>
@@ -59,6 +60,7 @@
                   <th>Taxa Anual</th>
                   <th>Iban da Conta</th>
                   <th></th>
+                  <th></th>
                 </thead>
                 <tbody>
                 @if (DepositAccounts.Count() > 0)
@@ -73,6 +75,12 @@
                             <td>@active.Value</td>
                             <td>@active.YearlyTax</td>
                             <td>@active.Account</td>
+                            @if (active.Value > 0)
+							{
+								<td><button class="btn btn-warning" @onclick="() => PayDeposit(active.Id, active.Value)">Pagar</button></td>	
+							} else {
+								<td><button class="btn btn-info" @onclick='async () => await jsRuntime.InvokeAsync<string>("alert", "O deposito já está pago")'>Pago</button></td>
+							}
                             <td><a href="@($"deposit/{active.Id}")" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
                             <button class="btn btn-danger" @onclick="() => DeleteDepositActive(active.Id)"><i class="bi bi-trash3-fill"></i></button></td>
                           </tr>
@@ -200,6 +208,7 @@
                 <th>Valor por ano</th>
                 <th>Iban da Conta</th>
                 <th></th>
+                <th></th>
               </thead>
               <tbody>
                 @if(PropertyAccounts.Count() > 0) {
@@ -216,6 +225,12 @@
                       <td>@active.MonthValue</td>
                       <td>@active.YearlyValue</td>
                       <td>@active.Account</td>
+						@if (active.PropertyValue > 0)
+						{
+							<td><button class="btn btn-warning" @onclick="() => PayProperty(active.Id, active.PropertyValue)">Pagar</button></td>	
+						} else {
+							 <td><button class="btn btn-info" @onclick='async () => await jsRuntime.InvokeAsync<string>("alert", "O imóvel já está pago")'>Pago</button></td>
+						}
                       <td><a href="@($"property/{active.Id}")" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
                       <button class="btn btn-danger" @onclick="() => DeletePropertyActive(active.Id)"><i class="bi bi-trash3-fill"></i></button></td>
                     </tr>
@@ -308,6 +323,34 @@
         DepositAccounts.Remove(depositId);
       }
           
+    }
+
+    protected async void PayDeposit(Guid id, decimal amount) 
+    {
+		var result = await depositEndPoint.PayDeposit(new PayDepositRequest {
+			DepositId = id,
+			Amount = amount
+		});
+
+		if (result.IsError)
+		{
+			navigationManager.NavigateTo($"/account/{AccountIban}", true);
+		}
+
+    }
+
+    protected async void PayProperty(Guid id, decimal amount)
+    {
+		var result = await propertyAccountEndPoint.PayProperty(new PayPropertyRequest {
+			PropertyId = id,
+			Amount = amount
+		});
+
+		if (result.IsError)
+		{
+			navigationManager.NavigateTo($"/account/{AccountIban}", true);
+		}
+
     }
 
     protected void CreateInvFundActive()
