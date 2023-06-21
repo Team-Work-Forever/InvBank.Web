@@ -5,6 +5,8 @@
 
 <h1>Registo</h1>
 
+<Modal @ref="Modal"/>
+
 <div class="row">
   <div class="col">
     <EditForm Model="@RegisterModel" OnSubmit="RegisterUser">
@@ -72,12 +74,12 @@
 
     private RegisterClientModel RegisterModel = new RegisterClientModel();
     private List<string> validationErrors = new List<string>();
+    public Modal Modal { get; set; } = null!;
 
     private async Task RegisterUser()
     {
         validationErrors.Clear();
 
-        
         var validationResults = RegisterModel.Validate();
         if (validationResults.Any())
         {
@@ -87,13 +89,13 @@
        
         var result = await authenticationService.RegisterClient(RegisterModel);
 
-        if (!result.IsError)
+        if (result.IsError)
         {
-            navigationManager.NavigateTo("/login");
+            Modal.Open("Registro Falhado", result.FirstError.Description);
             return;
         }
 
-        navigationManager.NavigateTo("/");
+        navigationManager.NavigateTo("/login");
                 
     }
 

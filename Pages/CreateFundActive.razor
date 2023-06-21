@@ -8,6 +8,8 @@
 
 <PageTitle>Registar Fundo de Investimento</PageTitle>
 
+<Modal @ref="Modal"/>
+
 <div class="row">
   <div class="col">
     <EditForm Model="@InvFundActive" OnSubmit="Register">
@@ -70,12 +72,10 @@
 
     [Parameter]
     public string AccountIban { get; set; } = null!;
-
     public ActivesInvestmentFund InvFundActive { get; set; } = new ActivesInvestmentFund();
-
     private List<string> validationErrors = new List<string>();
-
     public List<AccountResponse> Accounts { get; set; } = new();
+    public Modal Modal { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -112,6 +112,7 @@
 
         if (result.IsError)
         {
+            Modal.Open("Falha no Registo de um Fundo de Investimento", result.FirstError.Description);
             return;
         }
 

@@ -7,6 +7,8 @@
 
 <PageTitle>Registar Depósito a Prazo</PageTitle>
 
+<Modal @ref="Modal"/>
+
 <div class="row">
   <div class="col">
     <EditForm Model="@DepositActive" OnSubmit="Register">
@@ -73,12 +75,10 @@
 
     [Parameter]
     public string AccountIban { get; set; } = null!;
-
     public ActivesDepositAccount DepositActive { get; set; } = new ActivesDepositAccount();
-
     private List<string> validationErrors = new List<string>();
-
     public List<AccountResponse> Accounts { get; set; } = new();
+    public Modal Modal { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,6 +116,7 @@
 
         if (result.IsError)
         {
+            Modal.Open("Falha no Registo de um Deposito a Praso", result.FirstError.Description);
             return;
         }
 

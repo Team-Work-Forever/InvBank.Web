@@ -8,6 +8,8 @@
 
 <PageTitle>Registar Propriedade Imóvel</PageTitle>
 
+<Modal @ref="Modal"/>
+
 <div class="row">
   <div class="col">
     <EditForm Model="@PropertyActive" OnSubmit="Register">
@@ -92,12 +94,10 @@
 
     [Parameter]
     public string AccountIban { get; set; } = null!;
-
     public ActivesProperty PropertyActive { get; set; } = new ActivesProperty();
-
     private List<string> validationErrors = new List<string>();
-
     public List<AccountResponse> Accounts { get; set; } = new();
+    public Modal Modal { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -139,6 +139,7 @@
 
         if (result.IsError)
         {
+            Modal.Open("Falha no Registo de um ativo ímovel", result.FirstError.Description);
             return;
         }
 
