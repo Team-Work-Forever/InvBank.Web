@@ -48,25 +48,25 @@ public class ApiHelper : IApiCaller
         return request;
     }
 
-    public virtual async Task<HttpResponseMessage> DoDelete(string endpoint, IDictionary<string, string>? headers)
+    public virtual async Task<HttpResponseMessage> DoDelete(string endpoint, IDictionary<string, string>? headers = null)
     {
         var request = GenericApiCall(endpoint, HttpMethod.Delete, headers);
         return await _httpClient.SendAsync(request);
     }
 
-    public virtual async Task<HttpResponseMessage> DoGet(string endpoint, IDictionary<string, string>? headers)
+    public virtual async Task<HttpResponseMessage> DoGet(string endpoint, IDictionary<string, string>? headers = null)
     {
         var request = GenericApiCall(endpoint, HttpMethod.Get, headers);
         return await _httpClient.SendAsync(request);
     }
 
-    public virtual async Task<HttpResponseMessage> DoPost(string endpoint, string payload, IDictionary<string, string>? headers)
+    public virtual async Task<HttpResponseMessage> DoPost(string endpoint, string payload, IDictionary<string, string>? headers = null)
     {
         var request = GenericApiCall(endpoint, HttpMethod.Post, payload, headers);
         return await _httpClient.SendAsync(request);
     }
 
-    public virtual async Task<HttpResponseMessage> DoPut(string endpoint, string payload, IDictionary<string, string>? headers)
+    public virtual async Task<HttpResponseMessage> DoPut(string endpoint, string payload, IDictionary<string, string>? headers = null)
     {
         var request = GenericApiCall(endpoint, HttpMethod.Put, payload, headers);
         return await _httpClient.SendAsync(request);
