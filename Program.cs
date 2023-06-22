@@ -4,6 +4,7 @@ using InvBank.Web;
 using InvBank.Web.Helper;
 using InvBank.Web.Provider;
 using InvBank.Service;
+using InvBank.Web.Pages;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

@@ -26,7 +26,7 @@ public class ActivesDepositAccount
     [Required(ErrorMessage = "A percentagem de imposto anual é obrigatória."), Range(0, 300, ErrorMessage = "A taxa percentagem de imposto deve estar entre 0 e 300.")]
     public decimal YearlyTax { get; set; } = 0;
 
-    [Required(ErrorMessage = "A conta é obrigatória."), StringLength(28, MinimumLength = 28, ErrorMessage = "A conta deve ter exatamente 28 dígitos.")]
+    [Required(ErrorMessage = "A conta é obrigatória."), StringLength(30, MinimumLength = 30, ErrorMessage = "A conta deve ter exatamente 28 dígitos.")]
     public string Account { get; set; } = string.Empty;
 
     public IEnumerable<ValidationResult> Validate()

@@ -1,0 +1,140 @@
+@page "/dashboard"
+
+@using Contracts.Account;
+@inject NavigationManager NavigationManager;
+@inject Helper.EndPoints.AccountEndPoint AccountEndPoint;
+@attribute [Authorize()]
+
+<PageTitle>Gestor de Ativos (Investe Aqui)</PageTitle>
+
+<h1>Clientes</h1>
+
+@{ int i = 0; }
+@foreach (var account in Accounts)
+{
+<div class="accordions" style="margin-top: 20px">
+    <div class="accordion" id="actives">
+        <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#@i"
+                aria-expanded="false"
+                aria-controls="@i"
+            >
+            @account.iban
+            </button>
+        </h2>
+        <div
+            id="@i"
+            class="accordion-collapse collapse"
+            data-bs-parent="#actives"
+        >
+            <div class="row">
+            </div>
+                <div class="accordion-body">
+                    <section>
+                        <table class="table table.sprited table-bordered table-hover">
+                            <thead>
+                                <th>Nome</th>
+                                <th>Data inicial</th>
+                                <th>Duração</th>
+                                <th>Taxa</th>
+                                <th>Valor</th>
+                                <th>Taxa Anual</th>
+                            </thead>
+                                @if (account.DepositResponse.Count() > 0)
+                                {
+                                    @foreach (var deposits in account.DepositResponse)
+                                    {
+                                        <tr>
+                                            <th>@deposits.DepositName</th>
+                                            <th>@deposits.InitialDate</th>
+                                            <th>@deposits.Duration</th>
+                                            <th>@deposits.TaxPercent</th>
+                                            <th>@deposits.Value</th>
+                                            <th>@deposits.YearlyTax</th>
+                                        </tr>
+                                    }
+                                }
+                        </table>
+                        <div style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px">
+                            <button 
+                                @onclick="() => CreateDeposit(account.iban)"
+                                type="submit"
+                                class="btn btn-primary">
+                                Criar um Deposito a Praso
+                            </button>
+                        </div>
+                    </section>
+                    <section>
+                        <table class="table table.sprited table-bordered table-hover">
+                            <thead>
+                                <th>Designação</th>
+                                <th>Data inicial</th>
+                                <th>Duração</th>
+                                <th>Taxa</th>
+                                <th>Codigo Postal</th>
+                                <th>Renda</th>
+                                <th>Lucro total por Mês</th>
+                                <th>Lucro total por Ano</th>
+                            </thead>
+                                @if (account.Properties.Count() > 0)
+                                {
+                                    @foreach (var deposits in account.Properties)
+                                    {
+                                        <tr>
+                                            <th>@deposits.Designation</th>
+                                            <th>@deposits.InitialDate</th>
+                                            <th>@deposits.Duration</th>
+                                            <th>@deposits.TaxPercent</th>
+                                            <th>@deposits.PostalCode</th>
+                                            <th>@deposits.RentValue</th>
+                                            <th>@deposits.MonthValue</th>
+                                            <th>@deposits.YearlyValue</th>
+                                        </tr>
+                                    }
+                                }
+                        </table>
+                        <div style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px">
+                            <button type="submit" class="btn btn-primary">Registar um ímovel</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+i++;
+}
+
+@code {
+
+    public List<AccountResponse> Accounts { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var clientesResponse = await AccountEndPoint.GetAllAccount();
+
+        if (clientesResponse.IsError)
+        {
+            return;
+        }
+
+        Accounts = clientesResponse.Value.ToList();
+
+    }
+
+    protected void CreateDeposit(string accountIban) 
+    {
+        NavigationManager.NavigateTo($"/createdeposit/{accountIban}/dashboard");
+    }
+
+    protected void RegisterProperty(string accountIban) 
+    {
+        NavigationManager.NavigateTo($"/createproperty/{accountIban}/dashboard");
+    }
+
+}

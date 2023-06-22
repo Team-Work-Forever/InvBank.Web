@@ -1,4 +1,4 @@
-@page "/createdeposit/{AccountIban}"
+@page "/createdeposit/{AccountIban}/{Redirect}"
 @using InvBank.Web.Contracts.Account
 @using InvBank.Models
 @inject AccountEndPoint accountEndPoint
@@ -75,6 +75,10 @@
 
     [Parameter]
     public string AccountIban { get; set; } = null!;
+
+    [Parameter]
+    public string Redirect { get; set; } = null!;
+
     public ActivesDepositAccount DepositActive { get; set; } = new ActivesDepositAccount();
     private List<string> validationErrors = new List<string>();
     public List<AccountResponse> Accounts { get; set; } = new();
@@ -120,7 +124,7 @@
             return;
         }
 
-        navigationManager.NavigateTo($"/account/{AccountIban}");
+        navigationManager.NavigateTo($"/{Redirect}");
 
     }
 
