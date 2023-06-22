@@ -13,6 +13,8 @@ public class HandlerResponseFactory<T>
                 return new SucessHandler<T>();
             case HttpStatusCode.BadRequest:
                 return new BadResponseHandler<T>();
+            case HttpStatusCode.Unauthorized:
+                return new UnauthorizedHandler<T>();
             default:
                 return new DefaultReponseHandler<T>();
         }
