@@ -6,7 +6,7 @@ namespace InvBank.Web.Helper.EndPoints;
 
 public class ReportEndPoint : BaseEndPoint
 {
-    public ReportEndPoint(ApiHelper apiHelper) : base(apiHelper)
+    public ReportEndPoint(AuthApiHelper apiHelper) : base(apiHelper)
     {
     }
 
@@ -14,7 +14,7 @@ public class ReportEndPoint : BaseEndPoint
     {
         return await MakeRequest<ProfitReportResponse>
         (
-            () => _apiHelper.DoPostAuth("/report/profit", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPost("/report/profit", JsonSerializer.Serialize(request))
         );
     }
 
@@ -22,7 +22,7 @@ public class ReportEndPoint : BaseEndPoint
     {
         return await MakeRequest<PayReportResponse>
         (
-            () => _apiHelper.DoPostAuth($"/report/pay?iban={accountIban}", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPost($"/report/pay?iban={accountIban}", JsonSerializer.Serialize(request))
         );
     }
 

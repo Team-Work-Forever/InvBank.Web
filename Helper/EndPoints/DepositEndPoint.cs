@@ -7,7 +7,7 @@ namespace InvBank.Web.Helper.EndPoints;
 
 public class DepositEndPoint : BaseEndPoint
 {
-    public DepositEndPoint(ApiHelper apiHelper) : base(apiHelper)
+    public DepositEndPoint(AuthApiHelper apiHelper) : base(apiHelper)
     {
     }
 
@@ -15,7 +15,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoPostAuth($"/deposits/pay", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPost($"/deposits/pay", JsonSerializer.Serialize(request))
         );
     }
 
@@ -23,7 +23,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<DepositResponse>
         (
-            () => _apiHelper.DoGetAuth($"/deposits?id={id}")
+            () => _apiHelper.DoGet($"/deposits?id={id}")
         );
     }
 
@@ -31,7 +31,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<IEnumerable<DepositResponse>>
         (
-            () => _apiHelper.DoGetAuth($"/deposits/all?accountIban={accountIban}")
+            () => _apiHelper.DoGet($"/deposits/all?accountIban={accountIban}")
         );
     }
 
@@ -39,7 +39,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoPostAuth($"/deposits/create", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPost($"/deposits/create", JsonSerializer.Serialize(request))
         );
     }
 
@@ -47,7 +47,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<IEnumerable<DepositResponse>>
         (
-            () => _apiHelper.DoUpdateAuth($"/deposits/update?iban={depositId}", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPut($"/deposits/update?iban={depositId}", JsonSerializer.Serialize(request))
         );
     }
 
@@ -55,7 +55,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoDeleteAuth($"/deposits/delete?depositIban={depositId}")
+            () => _apiHelper.DoDelete($"/deposits/delete?depositIban={depositId}")
         );
     }
 

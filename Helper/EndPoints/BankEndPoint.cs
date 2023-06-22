@@ -7,7 +7,7 @@ namespace InvBank.Web.Helper.EndPoints;
 
 public class BankEndPoint : BaseEndPoint
 {
-    public BankEndPoint(ApiHelper apiHelper) : base(apiHelper)
+    public BankEndPoint(AuthApiHelper apiHelper) : base(apiHelper)
     {
     }
 
@@ -15,7 +15,7 @@ public class BankEndPoint : BaseEndPoint
     {
         return await MakeRequest<IEnumerable<BankResponse>>
         (
-            () => _apiHelper.DoGetAuth("/banks")
+            () => _apiHelper.DoGet("/banks")
         );
     }
 
@@ -23,7 +23,7 @@ public class BankEndPoint : BaseEndPoint
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoPostAuth("/banks/create", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPost("/banks/create", JsonSerializer.Serialize(request))
         );
     }
 

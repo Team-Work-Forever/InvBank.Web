@@ -7,21 +7,21 @@ namespace InvBank.Web.Helper.EndPoints;
 
 public class FundEndPoint : BaseEndPoint
 {
-    public FundEndPoint(ApiHelper apiHelper) : base(apiHelper)
+    public FundEndPoint(AuthApiHelper apiHelper) : base(apiHelper)
     {
     }
 
     public async Task<ErrorOr<SimpleResponse>> CreateFund(CreateFundRequest request)
     {
         return await MakeRequest<SimpleResponse>(
-            () => _apiHelper.DoPostAuth($"/funds/create", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPost($"/funds/create", JsonSerializer.Serialize(request))
         );
     }
 
     public async Task<ErrorOr<IEnumerable<FundResponse>>> GetInvestFundOfAccount(string accountIban)
     {
         return await MakeRequest<IEnumerable<FundResponse>>(
-            () => _apiHelper.DoGetAuth($"/funds?iban={accountIban}")
+            () => _apiHelper.DoGet($"/funds?iban={accountIban}")
         );
     }
 
