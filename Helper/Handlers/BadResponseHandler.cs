@@ -8,13 +8,13 @@ public class BadResponseHandler<T> : IHandlerResponse<T>
 {
     public ErrorOr.ErrorOr<T> HandleResponse(string response)
     {
-        ErrorResponse? errorResponse = JsonSerializer.Deserialize<ErrorResponse>(response);
+        ValidationResponse? errorResponse = JsonSerializer.Deserialize<ValidationResponse>(response);
 
         if (errorResponse is null)
         {
             return Error.Unexpected("Ocorreu alguma falha na leitura de dados");
         }
 
-        return Error.Failure(errorResponse.TraceId, errorResponse.Title);
+        return Error.Validation(errorResponse.TraceId, errorResponse.Title);
     }
 }

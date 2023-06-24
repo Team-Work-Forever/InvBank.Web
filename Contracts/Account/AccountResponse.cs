@@ -12,6 +12,9 @@ public class AccountResponse
     [JsonPropertyName("bank")]
     public string Bank { get; set; } = null!;
 
+    [JsonPropertyName("amountValue")]
+    public decimal AmountValue { get; set; }
+
     [JsonPropertyName("deposits")]
     public IEnumerable<DepositResponse> DepositResponse { get; set; } = null!;
 

@@ -7,7 +7,7 @@
 
 <Modal @ref="Modal"/>
 
-<div class="row">
+<div class="row" style="margin-bottom: 20px;">
   <div class="col">
     <EditForm Model="@RegisterModel" OnSubmit="RegisterUser">
         <DataAnnotationsValidator/>
@@ -38,12 +38,12 @@
             <InputText type="password" id=confirmpassword @bind-Value=RegisterModel.ConfirmPassword class="form-control"></InputText>
         </div>     
         <div class="mb-3">
-            <label for="fistName" class="form-label">Nome:</label>
+            <label for="fistName" class="form-label">Nome Próprio:</label>
             <InputText id=fistName @bind-Value=RegisterModel.FirstName class="form-control"></InputText>
         </div>     
         <div class="mb-3">
-            <label for="fistName" class="form-label">Nome:</label>
-            <InputText id=fistName @bind-Value=RegisterModel.LastName class="form-control"></InputText>
+            <label for="lastName" class="form-label">Último Nome:</label>
+            <InputText id=lastName @bind-Value=RegisterModel.LastName class="form-control"></InputText>
         </div>     
         <div class="mb-3">
             <label for="nif" class="form-label">NIF:</label>

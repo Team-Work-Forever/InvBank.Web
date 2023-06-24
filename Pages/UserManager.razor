@@ -7,7 +7,18 @@
 
 <PageTitle>Gestor de Ativos (Investe Aqui)</PageTitle>
 
-<h1>Clientes</h1>
+<h1>Contas</h1>
+
+<div style="margin: 20px;" class="btn-group" role="group" aria-label="Basic example">
+    <button 
+        @onclick="() => ManageUsers()"
+        type="submit"
+        class="btn btn-warning">
+        Gerir Utilizadores
+    </button>
+</div>
+
+<Modal @ref="Modal" />
 
 @{ int i = 0; }
 @foreach (var account in Accounts)
@@ -35,7 +46,41 @@
             <div class="row">
             </div>
                 <div class="accordion-body">
-                    <section>
+
+                    <p>
+                        Informaçãoes: <br>
+                        IBAN: @account.iban <br>
+                        BANK: @account.Bank <br>
+                        VALOR DEPOSITADO: @account.AmountValue u.m<br>
+                        VALOR TOTAL EM DEPOSTIOS A PRASO: @account.DepositResponse.Sum(x => x.Value) u.m. <br>
+                        VALOR TOTAL EM PROPRIEDADES: @account.Properties.Sum(x => x.RentValue) u.m.<br>
+                    </p>
+
+                    <p style="margin-bottom: 5px;">
+                        Ações: <br>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                        <button 
+                            @onclick="() => OpenInsert(0)"
+                            type="submit"
+                            class="btn btn-primary">
+                            Depositar
+                        </button>
+                        </div>
+                    </p>
+
+                    @if (IsOperation)
+                    {
+                        <section style="margin: 20px 0;">
+                            <p>
+                                Valor a @Operation <br>
+                            </p>
+                            <InputNumber @bind-Value="AmountValue"/>
+                            <button @onclick="() => MakeTransfer(account)" class="btn btn-secondary">Finalizar</button>
+                            <button @onclick="() => CloseInsert()" class="btn btn-secondary">Cancelar</button>
+                        </section>
+                    }
+                    <section style="margin: 10px 0;">
+                        <p>Depósitos a Praso</p>
                         <table class="table table.sprited table-bordered table-hover">
                             <thead>
                                 <th>Nome</th>
@@ -60,16 +105,9 @@
                                     }
                                 }
                         </table>
-                        <div style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px">
-                            <button 
-                                @onclick="() => CreateDeposit(account.iban)"
-                                type="submit"
-                                class="btn btn-primary">
-                                Criar um Deposito a Praso
-                            </button>
-                        </div>
                     </section>
-                    <section>
+                    <section style="margin: 10px 0;">
+                        <p>Ímoveis</p>
                         <table class="table table.sprited table-bordered table-hover">
                             <thead>
                                 <th>Designação</th>
@@ -80,6 +118,7 @@
                                 <th>Renda</th>
                                 <th>Lucro total por Mês</th>
                                 <th>Lucro total por Ano</th>
+                                <th>Ações</th>
                             </thead>
                                 @if (account.Properties.Count() > 0)
                                 {
@@ -94,12 +133,41 @@
                                             <th>@deposits.RentValue</th>
                                             <th>@deposits.MonthValue</th>
                                             <th>@deposits.YearlyValue</th>
+                                            <th>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                    <button 
+                                                        @onclick="() => CreateDeposit(account.iban)"
+                                                        type="submit"
+                                                        class="btn btn-primary">
+                                                        Depositar
+                                                    </button>
+                                                    <button 
+                                                        @onclick="() => RegisterProperty(account.iban)"
+                                                        type="submit" 
+                                                        class="btn btn-primary">
+                                                        Levantar
+                                                    </button>
+                                                </div>
+                                            </th>
                                         </tr>
                                     }
                                 }
                         </table>
                         <div style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px">
-                            <button type="submit" class="btn btn-primary">Registar um ímovel</button>
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button 
+                                    @onclick="() => CreateDeposit(account.iban)"
+                                    type="submit"
+                                    class="btn btn-primary">
+                                    Registar Deposito a Praso
+                                </button>
+                                <button 
+                                    @onclick="() => RegisterProperty(account.iban)"
+                                    type="submit" 
+                                    class="btn btn-primary">
+                                    Registar um ímovel
+                                </button>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -113,6 +181,10 @@ i++;
 @code {
 
     public List<AccountResponse> Accounts { get; set; } = new();
+    public Modal Modal { get; set; } = null!;
+    public decimal AmountValue { get; set; } = 0;
+    public bool IsOperation { get; set; }
+    public string Operation { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -125,6 +197,62 @@ i++;
 
         Accounts = clientesResponse.Value.ToList();
 
+    }
+
+    protected void OpenInsert(int action) 
+    {
+        if (IsOperation)
+        {
+            return;
+        }
+
+        switch (action)
+        {
+            case 0:
+                Operation = "Depositar na conta";
+                break;
+            case 1:
+                Operation = "Levantar do deposito";
+                break;
+            default:
+                break;
+        }
+
+        IsOperation = true;
+    }
+    protected void CloseInsert() 
+    {
+        if (!IsOperation)
+        {
+            return;
+        }
+
+        IsOperation = false;
+    }
+
+    protected async Task MakeTransfer(AccountResponse account) 
+    {
+        var makeTransferResult = await AccountEndPoint.MakeTransfer(account.iban, new MakeTransferRequest { 
+            AmountValue = AmountValue
+        });
+    
+        if (makeTransferResult.IsError)
+        {
+            Modal.Open("Ocorreu um erro ao retirar dinheiro do deposito a praso", makeTransferResult.FirstError.Description);
+            return;
+        }
+
+        Accounts
+            .Where(x => x.iban == account.iban)
+            .Select(x => x.AmountValue += AmountValue);
+
+        CloseInsert();
+        StateHasChanged();
+    }
+
+    protected void ManageUsers() 
+    {
+        NavigationManager.NavigateTo("/admin");
     }
 
     protected void CreateDeposit(string accountIban) 

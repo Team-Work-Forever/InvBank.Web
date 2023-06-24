@@ -11,7 +11,7 @@ public class BaseEndPoint
         _apiHelper = apiHelper;
     }
 
-    public delegate Task<HttpResponseMessage> MakeFunc();
+    protected delegate Task<HttpResponseMessage> MakeFunc();
 
     protected async Task<ErrorOr<T>> MakeRequest<T>(MakeFunc apiCall)
     {

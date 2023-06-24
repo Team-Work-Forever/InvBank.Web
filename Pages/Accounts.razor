@@ -2,6 +2,7 @@
 @inject AccountEndPoint AccountEndPoint;
 @using InvBank.Web.Contracts.PropertyAccount
 @using InvBank.Web.Contracts.Deposit
+@using InvBank.Web.Contracts.Account
 @using InvBank.Web.Contracts.Fund
 @inject FundEndPoint fundEndPoint
 @inject DepositEndPoint depositEndPoint
@@ -12,11 +13,34 @@
 
 <PageTitle>Menu Inicial</PageTitle>
 
-<h1>Bem-vindo à sua conta! @AccountIban</h1>
+<h1>Bem-vindo à sua conta!</h1>
 
-<h1>Ativos</h1>
+<Modal @ref="Modal"/>
 
-<div class="accordions">
+<section style="margin: 20px 0;">
+    <p>
+        IBAN: @if (Account.iban is not null) { @Account.iban } <br>
+        Banco: @Account.Bank <br>
+        Valor Depositado: @Account.AmountValue <br>
+        Valor a Praso: @if(Account.DepositResponse is not null) { @Account.DepositResponse.Sum(x => x.Value) }
+    </p>
+    @if (!IsMakingTransfer)
+    {
+        <button @onclick="OpenMakeTransfer" class="btn btn-secondary">Fazer Transferência</button>
+    }
+</section>
+
+@if (IsMakingTransfer)
+{
+    <section style="margin: 20px 0;">
+        <p>Valor a Depositar na Conta</p>
+        <InputNumber @bind-Value="Amount"/>
+        <button @onclick="MakeTransfer" class="btn btn-secondary">Finalizar</button>
+        <button @onclick="OpenMakeTransfer" class="btn btn-secondary">Cancelar</button>
+    </section>
+}
+
+<div class="accordions" style="margin: 20px 0;">
   <h2>Meus Ativo</h2>
 
   <div class="accordion" id="actives">
@@ -76,21 +100,21 @@
                             <td>@active.YearlyTax</td>
                             <td>@active.Account</td>
                             @if (active.Value > 0)
-							{
-								<td><button class="btn btn-warning" @onclick="() => PayDeposit(active.Id, active.Value)">Pagar</button></td>	
-							} else {
-								<td><button class="btn btn-info" @onclick='async () => await jsRuntime.InvokeAsync<string>("alert", "O deposito já está pago")'>Pago</button></td>
-							}
+                            {
+                              <td>
+                                  <button class="btn btn-warning" @onclick="() => SetDepositValue(active.Id)">Depositar</button>
+                                  <button class="btn btn-warning" @onclick="() => GetDepositValue(active.Id)">Levantar</button>
+                              </td>	
+                            }
                             <td><a href="@($"deposit/{active.Id}")" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
                             <button class="btn btn-danger" @onclick="() => DeleteDepositActive(active.Id)"><i class="bi bi-trash3-fill"></i></button></td>
                           </tr>
                   }
-                }
-                else
-                {
-                      <tr><td colspan="8" align="center">Nenhum ativo registado!</td></tr>
-                }
-
+                    }
+                    else
+                    {
+                        <tr><td colspan="8" align="center">Nenhum ativo registado!</td></tr>
+                    }
                 </tbody>
               </table>
           }
@@ -253,41 +277,61 @@
 @code {
 
     [Parameter]
-    public string AccountIban { get; set; } = null!;
-
+    public string AccountIban { get; set; } = string.Empty;
+    public AccountResponse Account { get; set; } = new();
     public List<DepositResponse> DepositAccounts { get; set; } = new();
-    public List<FundResponse> InvFundAccounts { get; set; } = new();
     public List<PropertyAccountResponse> PropertyAccounts { get; set; } = new();
+    public List<FundResponse> InvFundAccounts { get; set; } = new();
+    public Modal Modal { get; set; } = null!;
+    public decimal Amount { get; set; } = 0;
+    public bool IsMakingTransfer { get; set; }
+
+    private async Task FetchData() 
+    {
+        var accountResult = await AccountEndPoint.GetAccount(AccountIban);
+
+        if (accountResult.IsError)
+        {   
+            return;
+        }
+
+        Account = accountResult.Value;
+        DepositAccounts = Account.DepositResponse.ToList();
+        PropertyAccounts = Account.Properties.ToList();
+
+        var fundResult = await fundEndPoint.GetInvestFundOfAccount(AccountIban);
+
+        if (fundResult.IsError)
+        {	
+            return;
+        }
+
+        InvFundAccounts = fundResult.Value.ToList();
+    }
 
     protected async override Task OnInitializedAsync()
     {
+        await FetchData();
+    }
 
-      var fundResult = await fundEndPoint.GetInvestFundOfAccount(AccountIban);
+    protected void OpenMakeTransfer() 
+    {
+        IsMakingTransfer = !IsMakingTransfer;
+    }
 
-      if (fundResult.IsError)
-      {	
-          return;
-      }
+    protected async Task MakeTransfer() 
+    {
 
-      InvFundAccounts = fundResult.Value.ToList();
+        var result = await AccountEndPoint.MakeTransfer(AccountIban, new MakeTransferRequest { AmountValue = Amount });
 
-      var depositResult = await depositEndPoint.GetAllDeposit(AccountIban);
+        if (result.IsError)
+        {
+            Modal.Open("Falha na Transferência", result.FirstError.Description);
+        }
 
-    if (depositResult.IsError)
-      {	
-          return;
-      }
-
-      DepositAccounts = depositResult.Value.ToList();
-
-      var propertyResult = await propertyAccountEndPoint.GetAllPropertyAccount(AccountIban);
-
-      if (propertyResult.IsError)
-      {	
-          return;
-      }
-
-      PropertyAccounts = propertyResult.Value.ToList();
+        OpenMakeTransfer();
+        Amount = 0;
+        await FetchData();
 
     }
 
@@ -308,21 +352,19 @@
 
     protected async void  DeleteDepositActive(Guid id)
     {
-  
-      var result = await depositEndPoint.DeleteDeposit(id);
+        var result = await depositEndPoint.DeleteDeposit(id);
 
-      if (result.IsError)
-      {
-        return;
-      }
+        if (result.IsError)
+        {
+            return;
+        }
 
-      var depositId = DepositAccounts.FirstOrDefault(da => da.Id == id);
+        var depositId = DepositAccounts.FirstOrDefault(da => da.Id == id);
 
-      if (depositId is not null)
-      {
-        DepositAccounts.Remove(depositId);
-      }
-          
+        if (depositId is not null)
+        {
+            DepositAccounts.Remove(depositId);
+        }
     }
 
     protected async void PayDeposit(Guid id, decimal amount) 
@@ -336,7 +378,6 @@
 		{
 			navigationManager.NavigateTo($"/account/{AccountIban}", true);
 		}
-
     }
 
     protected async void PayProperty(Guid id, decimal amount)
@@ -350,6 +391,21 @@
 		{
 			navigationManager.NavigateTo($"/account/{AccountIban}", true);
 		}
+    }
+
+    protected async Task GetDepositValue(Guid depositId) {
+
+        depositEndPoint.GetDepositValue(depositId, new DepositValueRequest {
+            AmountValue = 2
+        });
+
+    }
+
+    protected async Task SetDepositValue(Guid depositId) {
+
+        depositEndPoint.SetDepositValue(depositId, new DepositValueRequest {
+            AmountValue = 2
+        });
 
     }
 
@@ -382,7 +438,6 @@
 		{
 			PropertyAccounts.Remove(propertyId);
 		}
-    
     }
 
 }

@@ -8,7 +8,17 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" @onclick="() => Close()" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        @Description
+        @if (IsMoney)
+        {
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Valor:</label>
+            <InputText @bind-Value=Value type="text" class="form-control" id="recipient-name" />
+          </div>
+        </form>
+        } else {
+            @Description
+        }
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Ok</button>
@@ -30,10 +40,12 @@
     [Parameter]
     public string Description { get; set; } = string.Empty;
 
+    [Parameter]
+    public bool IsMoney { get; set; }
     public bool IsOpened { get; set; }
-
 	public string ModalClass { get; set; } = "";
 	public string ModalDisplay { get; set; } = "none;";
+    public string Value { get; set; } = null!;
 
     public void Open(string title, string description)
     {
@@ -44,6 +56,14 @@
         ModalClass = "Show";
         IsOpened = true;
         StateHasChanged();
+    }
+    public async Task<string> Insert(string title)
+    {
+        Open(title, string.Empty);
+
+        while (IsOpened) { System.Console.WriteLine("ola"); }
+
+        return await Task.FromResult<string>(title);
     }
 
     public void Close()

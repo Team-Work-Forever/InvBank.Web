@@ -11,6 +11,11 @@ public class AccountEndPoint : BaseEndPoint
     {
     }
 
+    public async Task<ErrorOr<SimpleResponse>> MakeTransfer(string accountIban, MakeTransferRequest request)
+    {
+        return await MakeRequest<SimpleResponse>(() => _apiHelper.DoPost($"/accounts/make/transfer?accountIban={accountIban}", JsonSerializer.Serialize(request)));
+    }
+
     public async Task<ErrorOr<AccountResponse>> CreateAccount(CreateAccountRequest request)
     {
         return await MakeRequest<AccountResponse>(() => _apiHelper.DoPost($"/accounts/create", JsonSerializer.Serialize(request)));

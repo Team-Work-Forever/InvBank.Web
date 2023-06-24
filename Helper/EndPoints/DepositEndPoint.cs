@@ -11,6 +11,22 @@ public class DepositEndPoint : BaseEndPoint
     {
     }
 
+    public async Task<ErrorOr<SimpleResponse>> SetDepositValue(Guid depositId, DepositValueRequest request)
+    {
+        return await MakeRequest<SimpleResponse>
+        (
+            () => _apiHelper.DoPost($"/deposits/set/money?depositId=" + depositId, JsonSerializer.Serialize(request))
+        );
+    }
+
+    public async Task<ErrorOr<SimpleResponse>> GetDepositValue(Guid depositId, DepositValueRequest request)
+    {
+        return await MakeRequest<SimpleResponse>
+        (
+            () => _apiHelper.DoPost($"/deposits/set/money?depositId=" + depositId, JsonSerializer.Serialize(request))
+        );
+    }
+
     public async Task<ErrorOr<SimpleResponse>> PayDeposit(PayDepositRequest request)
     {
         return await MakeRequest<SimpleResponse>

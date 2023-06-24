@@ -3,14 +3,13 @@ using InvBank.Web.Helper;
 
 namespace InvBank.Web.Contracts.Users;
 
-public class UserResponse
+public class CreateUserByRoleRequest
 {
-
-    [JsonPropertyName("id")]
-    public Guid Id { get; set; }
-
     [JsonPropertyName("email")]
     public string Email { get; set; } = null!;
+    
+    [JsonPropertyName("password")]
+    public string Password { get; set; } = null!;
 
     [JsonPropertyName("firstName")]
     public string FirstName { get; set; } = null!;

@@ -3,12 +3,8 @@ using InvBank.Web.Helper;
 
 namespace InvBank.Web.Contracts.Users;
 
-public class UserResponse
+public class UpdateUserByRoleRequest
 {
-
-    [JsonPropertyName("id")]
-    public Guid Id { get; set; }
-
     [JsonPropertyName("email")]
     public string Email { get; set; } = null!;
 
