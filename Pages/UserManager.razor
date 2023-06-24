@@ -1,5 +1,6 @@
 @page "/dashboard"
 
+@using Helper.FilterActives;
 @using Contracts.Account;
 @inject NavigationManager NavigationManager;
 @inject Helper.EndPoints.AccountEndPoint AccountEndPoint;
@@ -8,6 +9,17 @@
 <PageTitle>Gestor de Ativos (Investe Aqui)</PageTitle>
 
 <h1>Contas</h1>
+
+<div style="display: flex; flex-direction: row; gap: 12px; width: 100%;">
+    <InputText style="width: 25%;" @bind-Value=BindSearch @oninput=OnInputChanged placeholder="Procure por ativos (nome ou min(valor))" />
+    <div class="dropdown">
+        <InputSelect @bind-Value=ActiveType class="form-select">
+            <option value="0">Deposito a Praso</option>
+            <option value="1">ímoveis</option>
+            <option value="2">Fundo de Investimento</option>
+        </InputSelect>
+    </div>
+</div>
 
 <div style="margin: 20px;" class="btn-group" role="group" aria-label="Basic example">
     <button 
@@ -21,7 +33,7 @@
 <Modal @ref="Modal" />
 
 @{ int i = 0; }
-@foreach (var account in Accounts)
+@foreach (var account in ResultsAccounts)
 {
 <div class="accordions" style="margin-top: 20px">
     <div class="accordion" id="actives">
@@ -179,8 +191,10 @@ i++;
 }
 
 @code {
-
+    public string BindSearch { get; set; } = string.Empty;
+    public ActiveType ActiveType { get; set; } = ActiveType.DEPOSIT;
     public List<AccountResponse> Accounts { get; set; } = new();
+    public List<AccountResponse> ResultsAccounts { get; set; } = new();
     public Modal Modal { get; set; } = null!;
     public decimal AmountValue { get; set; } = 0;
     public bool IsOperation { get; set; }
@@ -196,6 +210,7 @@ i++;
         }
 
         Accounts = clientesResponse.Value.ToList();
+        ResultsAccounts = Accounts;
 
     }
 
@@ -220,6 +235,34 @@ i++;
 
         IsOperation = true;
     }
+
+    protected void OnInputChanged(ChangeEventArgs args)
+    {
+        var searchResult = args.Value?.ToString();
+        List<AccountResponse> searchList = new();
+            
+        if (searchResult is null)
+        {
+            return;
+        }
+
+        switch (ActiveType)
+        {
+            case ActiveType.DEPOSIT:
+                searchList = new FilterDeposits().filter(Accounts, searchResult).ToList();
+                break;
+            case ActiveType.FUND:
+                searchList = new FilterProperties().filter(Accounts, searchResult).ToList();
+                break;
+            case ActiveType.PROPERTY:
+                searchList = new FilterDeposits().filter(Accounts, searchResult).ToList();
+                break;
+        }
+
+        ResultsAccounts = searchList;
+        StateHasChanged();
+    }
+
     protected void CloseInsert() 
     {
         if (!IsOperation)
