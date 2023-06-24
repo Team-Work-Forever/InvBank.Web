@@ -1,4 +1,4 @@
-@page "/createinvfund/{AccountIban}"
+@page "/createinvfund/{Redirect}"
 @using InvBank.Models
 @inject FundEndPoint fundEndPoint
 @inject AccountEndPoint accountEndPoint
@@ -43,35 +43,18 @@
         <div class="mb-3">
             <label for="tax_percent" class="form-label">Taxa:</label>
             <InputNumber id=tax_percent @bind-Value=InvFundActive.TaxPercent class="form-control"></InputNumber>
-        </div>     
-        <div class="mb-3">
-            <label for="value" class="form-label">Valor:</label>
-            <InputNumber id=value @bind-Value=InvFundActive.Value class="form-control"></InputNumber>
-        </div>       
-        <div class="mb-3">
-            <label for="account" class="form-label">Conta:</label>
-            <InputSelect id=account.Iban @bind-Value=InvFundActive.Account class="form-select">
-                @if(Accounts.Count() > 0) {
-                    <option value="">Selecionar Conta</option>
-                    @foreach (var account in Accounts)
-                    {
-                        <option>@account.iban</option>
-                    }
-                } else {
-                    <option value="">Selecionar Conta</option>
-                }
-            </InputSelect>
-        </div> 
+        </div>  
         <button href="/actives" type="submit" class="btn btn-primary">Registar</button>    
-        <a href="@($"account/{AccountIban}")" class="btn btn-secondary">Cancelar</a>
+        <button @onclick=GoBack class="btn btn-secondary">Cancelar</button>
     </EditForm>
   </div>
 </div>
 
 @code {
-
     [Parameter]
-    public string AccountIban { get; set; } = null!;
+    public string Redirect { get; set; } = string.Empty;
+    public decimal[] TaxPerMonth { get; set; } = new decimal[12];
+    public string AccountIban { get; set; } = string.Empty;
     public ActivesInvestmentFund InvFundActive { get; set; } = new ActivesInvestmentFund();
     private List<string> validationErrors = new List<string>();
     public List<AccountResponse> Accounts { get; set; } = new();
@@ -90,6 +73,11 @@
 
     }
 
+    protected void GoBack()
+    {
+        navigationManager.NavigateTo($"/{Redirect}");
+    }
+
     private async void Register()
     {
         validationErrors.Clear();
@@ -102,12 +90,10 @@
         }
 
         var result = await fundEndPoint.CreateFund(new CreateFundRequest {
-            Account = AccountIban,
             Duration = InvFundActive.Duration,
             InitialDate = DateOnly.FromDateTime(InvFundActive.InitialDate).ToString("dd/MM/yyyy"),
             Name = InvFundActive.Name,
-            TaxPercent = InvFundActive.TaxPercent,
-            Value = InvFundActive.Value
+            TaxPercent = InvFundActive.TaxPercent
         });
 
         if (result.IsError)
@@ -116,8 +102,7 @@
             return;
         }
 
-        navigationManager.NavigateTo($"/account/{AccountIban}");
-
+        GoBack();
     }
 
 }

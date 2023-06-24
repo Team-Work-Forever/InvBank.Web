@@ -21,7 +21,7 @@
 		{ @foreach (var user in UserAccounts)
 			{
 			<tr>
-			  <td @onclick="() => GoToAccount(user.iban)">@user.iban</td>
+			  <td @onclick="() => GoToAccount(user.iban)">@user.iban @user.AmountValue u.m.</td>
 			  <td>@user.Bank</td>
 			  <td>
 				<button class="btn btn-primary" @onclick="UpdateAccount">

@@ -28,6 +28,12 @@
         class="btn btn-warning">
         Gerir Utilizadores
     </button>
+    <button 
+        @onclick="() => CreateInvestmentFund()"
+        type="submit"
+        class="btn btn-warning">
+        Registar Fundo de Investimento
+    </button>
 </div>
 
 <Modal @ref="Modal" />
@@ -147,7 +153,7 @@
                                             <th>@deposits.YearlyValue</th>
                                             <th>
                                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                                    <button 
+                                                    @* <button 
                                                         @onclick="() => CreateDeposit(account.iban)"
                                                         type="submit"
                                                         class="btn btn-primary">
@@ -158,7 +164,7 @@
                                                         type="submit" 
                                                         class="btn btn-primary">
                                                         Levantar
-                                                    </button>
+                                                    </button> *@
                                                 </div>
                                             </th>
                                         </tr>
@@ -178,6 +184,12 @@
                                     type="submit" 
                                     class="btn btn-primary">
                                     Registar um ímovel
+                                </button>
+                                <button 
+                                    @onclick="() => SelectInvestmentFunds(account.iban)"
+                                    type="submit"
+                                    class="btn btn-warning">
+                                    Verificar Fundo de Investimento
                                 </button>
                             </div>
                         </div>
@@ -296,6 +308,16 @@ i++;
     protected void ManageUsers() 
     {
         NavigationManager.NavigateTo("/admin");
+    }
+
+    protected void CreateInvestmentFund() 
+    {
+        NavigationManager.NavigateTo("/createinvfund/dashboard");
+    }
+
+    protected void SelectInvestmentFunds(string accountIban) 
+    {
+        NavigationManager.NavigateTo($"/funds/{accountIban}");
     }
 
     protected void CreateDeposit(string accountIban) 

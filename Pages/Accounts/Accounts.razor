@@ -1,5 +1,4 @@
 ﻿@page "/account/{AccountIban}"
-@using Helper.FilterActives;
 @inject AccountEndPoint AccountEndPoint;
 @using InvBank.Web.Contracts.PropertyAccount
 @using InvBank.Web.Contracts.Deposit
@@ -35,10 +34,13 @@
         Valor Depositado: @Account.AmountValue <br>
         Valor a Praso: @if(Account.DepositResponse is not null) { @Account.DepositResponse.Sum(x => x.Value) }
     </p>
-    @if (!IsMakingTransfer)
-    {
-        <button @onclick="OpenMakeTransfer" class="btn btn-secondary">Fazer Transferência</button>
-    }
+    <div style="display: flex; flex-direction: row; gap: 12px;">
+        <button @onclick="InvestInFund" class="btn btn-secondary">Investir na Bolsa</button>
+        @if (!IsMakingTransfer)
+        {
+            <button @onclick="OpenMakeTransfer" class="btn btn-secondary">Fazer Transferência</button>
+        }
+    </div>
 </section>
 
 @if (IsMakingTransfer)
@@ -137,11 +139,6 @@
         class="accordion-collapse collapse"
         data-bs-parent="#actives"
       >
-                <div class="row">
-          <div class="col text-end">
-            <button type="button" class="btn btn-primary m-2" @onclick="CreateInvFundActive">Novo Registo</button>
-          </div>
-        </div>
         <div class="accordion-body">
           @if (DepositAccounts is null)
           {
@@ -164,7 +161,7 @@
                 {
                   @foreach (var active in InvFundAccounts)
                   {
-                          <tr>
+                          <tr @onclick="() => GoToFund(active.Id)">
                             <td>@active.Name</td>
                             <td>@active.InitialDate</td>
                             <td>@active.Duration</td>
@@ -205,11 +202,6 @@
         class="accordion-collapse collapse"
         data-bs-parent="#actives"
       >
-                <div class="row">
-          <div class="col text-end">
-            <button type="button" class="btn btn-primary m-2" @onclick="CreatePropertyActive">Novo Registo</button>
-          </div>
-        </div>
         <div class="accordion-body">
           @if (DepositAccounts is null)
           {
@@ -315,7 +307,17 @@
         await FetchData();
     }
 
-     protected void OnInputChanged(ChangeEventArgs args)
+    protected void GoToFund(Guid fundId) 
+    {
+        navigationManager.NavigateTo($"/details/fund/{fundId}/{AccountIban}");
+    }
+
+    protected void InvestInFund()
+    {
+        navigationManager.NavigateTo($"/funds/{AccountIban}");
+    }
+
+    protected void OnInputChanged(ChangeEventArgs args)
     {
         var searchResult = args.Value?.ToString();
         List<AccountResponse> searchList = new();
