@@ -112,7 +112,7 @@
                                 {
                                     @foreach (var deposits in account.DepositResponse)
                                     {
-                                        <tr>
+                                        <tr @onclick="() => SelectDeposit(deposits.Id)">
                                             <th>@deposits.DepositName</th>
                                             <th>@deposits.InitialDate</th>
                                             <th>@deposits.Duration</th>
@@ -142,7 +142,7 @@
                                 {
                                     @foreach (var deposits in account.Properties)
                                     {
-                                        <tr>
+                                        <tr @onclick="() => SelectProperty(deposits.Id)">
                                             <th>@deposits.Designation</th>
                                             <th>@deposits.InitialDate</th>
                                             <th>@deposits.Duration</th>
@@ -318,6 +318,16 @@ i++;
     protected void SelectInvestmentFunds(string accountIban) 
     {
         NavigationManager.NavigateTo($"/funds/{accountIban}");
+    }
+
+    protected void SelectDeposit(Guid depositId) 
+    {
+        NavigationManager.NavigateTo($"/details/deposit/{depositId}");
+    }
+
+    protected void SelectProperty(Guid propertyId) 
+    {
+        NavigationManager.NavigateTo($"/details/property/{propertyId}");
     }
 
     protected void CreateDeposit(string accountIban) 

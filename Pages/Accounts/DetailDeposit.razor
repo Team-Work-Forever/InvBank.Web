@@ -25,6 +25,7 @@
     Taxa de Juros: @Deposit.TaxPercent %<br>
     Valor: @Deposit.Value u.m.<br>
     Tax Anual: @Deposit.YearlyTax %<br>
+    Lucro: @Profit<br>
 </p> 
 <div style="margin: 20px;" class="btn-group" role="group" aria-label="Basic example">
     <button 
@@ -71,6 +72,7 @@
 
     [Parameter]
     public string Redirect { get; set; } = string.Empty;
+    public decimal Profit { get; set; }
 
     public decimal Amount { get; set; }
     public ActivesDepositAccount Deposit { get; set; } = new();
@@ -107,6 +109,15 @@
         Deposit.Value = depositResult.Value.Value;
         Deposit.Account = depositResult.Value.Account;
 
+        var profitResult = await DepositEndPoint.GetProfit(Deposit.Id);
+
+        if (profitResult.IsError)
+        {
+            GoBack();
+        }
+
+        Profit = profitResult.Value.Profit;
+
         var accountResult = await AccountEndPoint.GetAccount(Deposit.Account);
    
         if (accountResult.IsError)
@@ -115,6 +126,7 @@
         }
 
         Account = accountResult.Value;
+        
     }
 
     protected override async Task OnInitializedAsync()

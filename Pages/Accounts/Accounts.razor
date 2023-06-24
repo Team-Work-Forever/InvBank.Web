@@ -1,9 +1,9 @@
 ﻿@page "/account/{AccountIban}"
-@inject AccountEndPoint AccountEndPoint;
 @using InvBank.Web.Contracts.PropertyAccount
 @using InvBank.Web.Contracts.Deposit
 @using InvBank.Web.Contracts.Account
 @using InvBank.Web.Contracts.Fund
+@inject AccountEndPoint AccountEndPoint;
 @inject FundEndPoint fundEndPoint
 @inject DepositEndPoint depositEndPoint
 @inject PropertyAccountEndPoint propertyAccountEndPoint
@@ -98,7 +98,7 @@
                 {
                   @foreach (var active in DepositAccounts)
                   {
-                          <tr @onclick="() => GoToDeposit(active.Id)">
+                            <tr @onclick="() => GoToDeposit(active.Id)">
                             <td>@active.DepositName</td>
                             <td>@active.InitialDate</td>
                             <td>@active.Duration</td>

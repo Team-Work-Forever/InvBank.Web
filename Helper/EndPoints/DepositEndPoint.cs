@@ -11,6 +11,14 @@ public class DepositEndPoint : BaseEndPoint
     {
     }
 
+    public async Task<ErrorOr<ProfitValueResponse>> GetProfit(Guid depositId)
+    {
+        return await MakeRequest<ProfitValueResponse>
+        (
+            () => _apiHelper.DoGet($"/deposits/profit?depositId=" + depositId)
+        );
+    }
+
     public async Task<ErrorOr<SimpleResponse>> SetDepositValue(Guid depositId, DepositValueRequest request)
     {
         return await MakeRequest<SimpleResponse>

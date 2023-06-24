@@ -24,6 +24,7 @@
     Duração: @Fund.Duration meses<br>
     Taxa de Juros: @Fund.TaxPercent %<br>
     Valor: @Fund.Value u.m.<br>
+    Lucro: @Profit u.m.<br>
 </p> 
 <div style="margin: 20px;" class="btn-group" role="group" aria-label="Basic example">
     @if (canInvest)
@@ -73,8 +74,8 @@
 
     [Parameter]
     public string Redirect { get; set; } = string.Empty;
-
     public AccountResponse Account { get; set; } = new();
+    public decimal Profit { get; set; }
 
     public decimal Amount { get; set; }
     public FundResponse Fund { get; set; } = new();
@@ -109,6 +110,15 @@
         {
             GoBack();
         }
+
+        var profitResult = await FundEndPoint.GetProfit(Fund.Id);
+
+        if (profitResult.IsError)
+        {
+            GoBack();
+        }
+
+        Profit = profitResult.Value.Profit;
 
         var fundsAccount = await FundEndPoint.GetInvestFundOfAccount(AccountIban);
 

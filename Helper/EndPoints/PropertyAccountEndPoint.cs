@@ -19,6 +19,14 @@ public class PropertyAccountEndPoint : BaseEndPoint
         );
     }
 
+    public async Task<ErrorOr<ProfitValueResponse>> GetProfit(Guid id)
+    {
+        return await MakeRequest<ProfitValueResponse>
+        (
+            () => _apiHelper.DoGet("/properties/profit?propertyId="+id)
+        );
+    }
+
     public async Task<ErrorOr<SimpleResponse>> CreatePropertyAccount(CreatePropertyAccountRequest request)
     {
         return await MakeRequest<SimpleResponse>
@@ -31,7 +39,7 @@ public class PropertyAccountEndPoint : BaseEndPoint
     {
         return await MakeRequest<PropertyAccountResponse>
         (
-            () => _apiHelper.DoGet($"/properties?id={id}")
+            () => _apiHelper.DoGet($"/properties?propertyAccount={id}")
         );
     }
 

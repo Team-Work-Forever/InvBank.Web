@@ -12,6 +12,13 @@ public class FundEndPoint : BaseEndPoint
     {
     }
 
+    public async Task<ErrorOr<ProfitValueResponse>> GetProfit(Guid fundId)
+    {
+        return await MakeRequest<ProfitValueResponse>(
+            () => _apiHelper.DoGet($"/funds/profit?id={fundId}")
+        );
+    }
+
     public async Task<ErrorOr<FundResponse>> GetFund(Guid fundId)
     {
         return await MakeRequest<FundResponse>(

@@ -36,4 +36,7 @@ public class PropertyAccountResponse
 
     [JsonPropertyName("account")]
     public string Account { get; set; } = null!;
+
+    public decimal Profit { get; set; }
+
 }
