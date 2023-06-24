@@ -23,7 +23,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoPost($"/deposits/set/money?depositId=" + depositId, JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPost($"/deposits/get/money?depositId=" + depositId, JsonSerializer.Serialize(request))
         );
     }
 
@@ -39,7 +39,7 @@ public class DepositEndPoint : BaseEndPoint
     {
         return await MakeRequest<DepositResponse>
         (
-            () => _apiHelper.DoGet($"/deposits?id={id}")
+            () => _apiHelper.DoGet($"/deposits?depositId={id}")
         );
     }
 

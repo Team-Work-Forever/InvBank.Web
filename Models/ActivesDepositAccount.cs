@@ -6,7 +6,7 @@ namespace InvBank.Models;
 public class ActivesDepositAccount
 {
 
-    public int Id { get; set; } = 0;
+    public Guid Id { get; set; }
 
     [Required(ErrorMessage = "O nome é obrigatório."), StringLength(100, ErrorMessage = "O nome não pode ter mais de 100 caracteres.")]
     public string Name { get; set; } = string.Empty;
