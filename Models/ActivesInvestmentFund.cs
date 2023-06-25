@@ -15,14 +15,8 @@ public class ActivesInvestmentFund
     [Required(ErrorMessage = "A duração é obrigatória."), Range(0, 1000, ErrorMessage = "A duração deve estar entre 0 e 1000.")]
     public int Duration { get; set; } = 0;
 
-    [Required(ErrorMessage = "O valor é obrigatório."), Range(0, 10000000000, ErrorMessage = "O valor deve estar entre 0 e 10000000000.")]
-    public decimal Value { get; set; } = 0;
-
     [Required(ErrorMessage = "A percentagem de imposto é obrigatória."), Range(0, 300, ErrorMessage = "A percentagem de imposto deve estar entre 0 e 300.")]
     public decimal TaxPercent { get; set; } = 0;
-
-    [Required(ErrorMessage = "A conta é obrigatória."), StringLength(28, MinimumLength = 28, ErrorMessage = "A conta deve ter exatamente 28 dígitos.")]
-    public string Account { get; set; } = string.Empty;
 
     public IEnumerable<ValidationResult> Validate()
     {

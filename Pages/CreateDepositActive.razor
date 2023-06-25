@@ -1,4 +1,4 @@
-@page "/createdeposit/{AccountIban}"
+@page "/createdeposit/{AccountIban}/{Redirect}"
 @using InvBank.Web.Contracts.Account
 @using InvBank.Models
 @inject AccountEndPoint accountEndPoint
@@ -6,6 +6,8 @@
 @inject NavigationManager navigationManager
 
 <PageTitle>Registar Depósito a Prazo</PageTitle>
+
+<Modal @ref="Modal"/>
 
 <div class="row">
   <div class="col">
@@ -64,7 +66,7 @@
             </InputSelect>
         </div> 
         <button href="/actives" type="submit" class="btn btn-primary">Registar</button>    
-        <a href="@($"account/{AccountIban}")" class="btn btn-secondary">Cancelar</a>
+        <a @onclick="Cancel" class="btn btn-secondary">Cancelar</a>
     </EditForm>
   </div>
 </div>
@@ -74,11 +76,13 @@
     [Parameter]
     public string AccountIban { get; set; } = null!;
 
+    [Parameter]
+    public string Redirect { get; set; } = null!;
+
     public ActivesDepositAccount DepositActive { get; set; } = new ActivesDepositAccount();
-
     private List<string> validationErrors = new List<string>();
-
     public List<AccountResponse> Accounts { get; set; } = new();
+    public Modal Modal { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -91,6 +95,11 @@
 
         Accounts = result.Value.ToList();
 
+    }
+
+    private void Cancel() 
+    {
+        navigationManager.NavigateTo($"/{Redirect}");
     }
 
     private async void Register()
@@ -116,10 +125,11 @@
 
         if (result.IsError)
         {
+            Modal.Open("Falha no Registo de um Deposito a Praso", result.FirstError.Description);
             return;
         }
 
-        navigationManager.NavigateTo($"/account/{AccountIban}");
+        navigationManager.NavigateTo($"/{Redirect}");
 
     }
 

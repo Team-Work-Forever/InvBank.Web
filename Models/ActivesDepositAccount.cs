@@ -6,7 +6,7 @@ namespace InvBank.Models;
 public class ActivesDepositAccount
 {
 
-    public int Id { get; set; } = 0;
+    public Guid Id { get; set; }
 
     [Required(ErrorMessage = "O nome é obrigatório."), StringLength(100, ErrorMessage = "O nome não pode ter mais de 100 caracteres.")]
     public string Name { get; set; } = string.Empty;
@@ -26,7 +26,7 @@ public class ActivesDepositAccount
     [Required(ErrorMessage = "A percentagem de imposto anual é obrigatória."), Range(0, 300, ErrorMessage = "A taxa percentagem de imposto deve estar entre 0 e 300.")]
     public decimal YearlyTax { get; set; } = 0;
 
-    [Required(ErrorMessage = "A conta é obrigatória."), StringLength(28, MinimumLength = 28, ErrorMessage = "A conta deve ter exatamente 28 dígitos.")]
+    [Required(ErrorMessage = "A conta é obrigatória."), StringLength(30, MinimumLength = 30, ErrorMessage = "A conta deve ter exatamente 28 dígitos.")]
     public string Account { get; set; } = string.Empty;
 
     public IEnumerable<ValidationResult> Validate()

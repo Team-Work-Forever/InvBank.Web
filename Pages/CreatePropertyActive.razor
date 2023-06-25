@@ -1,4 +1,4 @@
-@page "/createproperty/{AccountIban}"
+@page "/createproperty/{AccountIban}/{Redirect}"
 @using InvBank.Web.Contracts.PropertyAccount
 @using InvBank.Web.Contracts.Account
 @using InvBank.Models
@@ -6,9 +6,11 @@
 @inject PropertyAccountEndPoint propertyAccountEndPoint
 @inject NavigationManager navigationManager
 
-<PageTitle>Registar Propriedade Imóvel</PageTitle>
+<h1>Registar Imóvel</h1>
 
-<div class="row">
+<Modal @ref="Modal"/>
+
+<div class="row" style="margin: 20px 0;">
   <div class="col">
     <EditForm Model="@PropertyActive" OnSubmit="Register">
         <DataAnnotationsValidator/>
@@ -83,7 +85,7 @@
             </InputSelect>
         </div> 
         <button href="/actives" type="submit" class="btn btn-primary">Registar</button>    
-        <a href="@($"account/{AccountIban}")" class="btn btn-secondary">Cancelar</a>
+        <a @onclick="Cancel" class="btn btn-secondary">Cancelar</a>
     </EditForm>
   </div>
 </div>
@@ -93,11 +95,13 @@
     [Parameter]
     public string AccountIban { get; set; } = null!;
 
+    [Parameter]
+    public string Redirect { get; set; } = null!;
+
     public ActivesProperty PropertyActive { get; set; } = new ActivesProperty();
-
     private List<string> validationErrors = new List<string>();
-
     public List<AccountResponse> Accounts { get; set; } = new();
+    public Modal Modal { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -110,6 +114,11 @@
 
         Accounts = result.Value.ToList();
 
+    }
+
+    private void Cancel() 
+    {
+        navigationManager.NavigateTo($"/{Redirect}");
     }
 
     private async void Register()
@@ -139,10 +148,11 @@
 
         if (result.IsError)
         {
+            Modal.Open("Falha no Registo de um ativo ímovel", result.FirstError.Description);
             return;
         }
 
-        navigationManager.NavigateTo($"/account/{AccountIban}");
+        navigationManager.NavigateTo($"/{Redirect}");
 
     }
 

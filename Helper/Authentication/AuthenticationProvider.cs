@@ -38,6 +38,12 @@ public class AuthenticationProvider : AuthenticationStateProvider
 
     }
 
+    public async Task LogOut() 
+    {
+        await _localStorage.RemoveItemAsync(CookieValue.AccessToken);
+        await _localStorage.RemoveItemAsync(CookieValue.RefreshToken);
+    }
+
     public async Task AuthenticateUser(string accessToken, string refreshToken)
     {
         await _localStorage.SetItemAsStringAsync(CookieValue.AccessToken, accessToken);

@@ -15,11 +15,4 @@ public class CreateFundRequest
 
     [JsonPropertyName("taxPercent")]
     public decimal TaxPercent { get; set; }
-
-    [JsonPropertyName("value")]
-    public decimal Value { get; set; }
-
-    [JsonPropertyName("account")]
-    public string Account { get; set; } = null!;
-
 }

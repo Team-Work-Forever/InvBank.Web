@@ -1,22 +1,29 @@
 using System.Text.Json;
 using ErrorOr;
 using InvBank.Web.Contracts;
-using InvBank.Web.Contracts.Deposit;
 using InvBank.Web.Contracts.PropertyAccount;
 
 namespace InvBank.Web.Helper.EndPoints;
 
 public class PropertyAccountEndPoint : BaseEndPoint
 {
-    public PropertyAccountEndPoint(ApiHelper apiHelper) : base(apiHelper)
+    public PropertyAccountEndPoint(AuthApiHelper apiHelper) : base(apiHelper)
     {
     }
-    
+
     public async Task<ErrorOr<SimpleResponse>> PayProperty(PayPropertyRequest request)
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoPostAuth($"/properties/pay", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPost($"/properties/pay", JsonSerializer.Serialize(request))
+        );
+    }
+
+    public async Task<ErrorOr<ProfitValueResponse>> GetProfit(Guid id)
+    {
+        return await MakeRequest<ProfitValueResponse>
+        (
+            () => _apiHelper.DoGet("/properties/profit?propertyId="+id)
         );
     }
 
@@ -24,7 +31,7 @@ public class PropertyAccountEndPoint : BaseEndPoint
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoPostAuth("/properties/create", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPost("/properties/create", JsonSerializer.Serialize(request))
         );
     }
 
@@ -32,7 +39,7 @@ public class PropertyAccountEndPoint : BaseEndPoint
     {
         return await MakeRequest<PropertyAccountResponse>
         (
-            () => _apiHelper.DoGetAuth($"/properties?id={id}")
+            () => _apiHelper.DoGet($"/properties?propertyAccount={id}")
         );
     }
 
@@ -40,7 +47,7 @@ public class PropertyAccountEndPoint : BaseEndPoint
     {
         return await MakeRequest<IEnumerable<PropertyAccountResponse>>
         (
-            () => _apiHelper.DoGetAuth($"/properties/all?iban={accountIban}")
+            () => _apiHelper.DoGet($"/properties/all?iban={accountIban}")
         );
     }
 
@@ -48,7 +55,7 @@ public class PropertyAccountEndPoint : BaseEndPoint
     {
         return await MakeRequest<IEnumerable<PropertyAccountResponse>>
         (
-            () => _apiHelper.DoUpdateAuth($"/properties/update?id={id}", JsonSerializer.Serialize(request))
+            () => _apiHelper.DoPut($"/properties/update?id={id}", JsonSerializer.Serialize(request))
         );
     }
 
@@ -56,7 +63,7 @@ public class PropertyAccountEndPoint : BaseEndPoint
     {
         return await MakeRequest<SimpleResponse>
         (
-            () => _apiHelper.DoDeleteAuth($"/properties/delete?id={id}")
+            () => _apiHelper.DoDelete($"/properties/delete?id={id}")
         );
     }
 

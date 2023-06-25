@@ -22,8 +22,10 @@ public static class DependencyInjection
     {
 
         services.AddScoped<ApiHelper>();
+        services.AddScoped<AuthApiHelper>();
 
         // Endpoints
+        services.AddScoped<UserEndPoint>();
         services.AddScoped<AccountEndPoint>();
         services.AddScoped<AuthenticationEndPoint>();
         services.AddScoped<BankEndPoint>();

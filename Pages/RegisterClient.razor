@@ -5,7 +5,9 @@
 
 <h1>Registo</h1>
 
-<div class="row">
+<Modal @ref="Modal"/>
+
+<div class="row" style="margin-bottom: 20px;">
   <div class="col">
     <EditForm Model="@RegisterModel" OnSubmit="RegisterUser">
         <DataAnnotationsValidator/>
@@ -36,12 +38,12 @@
             <InputText type="password" id=confirmpassword @bind-Value=RegisterModel.ConfirmPassword class="form-control"></InputText>
         </div>     
         <div class="mb-3">
-            <label for="fistName" class="form-label">Nome:</label>
+            <label for="fistName" class="form-label">Nome Próprio:</label>
             <InputText id=fistName @bind-Value=RegisterModel.FirstName class="form-control"></InputText>
         </div>     
         <div class="mb-3">
-            <label for="fistName" class="form-label">Nome:</label>
-            <InputText id=fistName @bind-Value=RegisterModel.LastName class="form-control"></InputText>
+            <label for="lastName" class="form-label">Último Nome:</label>
+            <InputText id=lastName @bind-Value=RegisterModel.LastName class="form-control"></InputText>
         </div>     
         <div class="mb-3">
             <label for="nif" class="form-label">NIF:</label>
@@ -72,12 +74,12 @@
 
     private RegisterClientModel RegisterModel = new RegisterClientModel();
     private List<string> validationErrors = new List<string>();
+    public Modal Modal { get; set; } = null!;
 
     private async Task RegisterUser()
     {
         validationErrors.Clear();
 
-        
         var validationResults = RegisterModel.Validate();
         if (validationResults.Any())
         {
@@ -87,13 +89,13 @@
        
         var result = await authenticationService.RegisterClient(RegisterModel);
 
-        if (!result.IsError)
+        if (result.IsError)
         {
-            navigationManager.NavigateTo("/login");
+            Modal.Open("Registro Falhado", result.FirstError.Description);
             return;
         }
 
-        navigationManager.NavigateTo("/");
+        navigationManager.NavigateTo("/login");
                 
     }
 
